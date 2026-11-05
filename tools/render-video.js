@@ -6,6 +6,13 @@
  *   node tools/render-video.js                # -> video/marteo.mp4 (1920x1080, 30fps)
  *   node tools/render-video.js out.mp4 60     # სხვა ფაილი / 60fps
  *
+ * დამატებითი პარამეტრები (გარემოს ცვლადებით):
+ *   DURATION=5        — ჩაწერე მხოლოდ პირველი N წამი (მაგ. მხოლოდ ლოგოს ანიმაცია)
+ *   EXTRA_CSS="..."   — დამატებითი CSS ჩაწერისას (მაგ. ელემენტის დამალვა)
+ * მაგალითი — მხოლოდ ლოგოს ანიმაცია, სლოგანის გარეშე:
+ *   DURATION=5 EXTRA_CSS=".s-intro .slogan{display:none}.s-intro .wordmark{margin-bottom:0}" \
+ *     node tools/render-video.js video/marteo-logo.mp4 60
+ *
  * ვირტუალური საათი: JS ტაიმერები (Playwright clock) და CSS ანიმაციები (Web Animations API)
  * ერთად მიიწევს წინ თითო კადრზე, ამიტომ ვიდეო სრულიად გლუვია კომპიუტერის სიჩქარის მიუხედავად.
  */
@@ -40,7 +47,7 @@ function serve() {
   await page.clock.install({ time: 0 });
   await page.clock.pauseAt(1000); // time only moves when we call runFor()
   await page.goto(`http://localhost:${srv.address().port}/index.html`, { waitUntil: 'networkidle' });
-  await page.addStyleTag({ content: '.ui,.flash{display:none!important}.player{cursor:none}' });
+  await page.addStyleTag({ content: '.ui,.flash{display:none!important}.player{cursor:none}' + (process.env.EXTRA_CSS || '') });
   await page.evaluate(async () => {
     for (const w of [400, 500, 600, 700, 800]) await document.fonts.load(`${w} 40px "Noto Sans Georgian"`, 'აბგ');
     await document.fonts.ready;
@@ -48,7 +55,9 @@ function serve() {
 
   const total = await page.evaluate(() => Array.from(document.querySelectorAll('.slide'))
     .reduce((s, el) => s + (+el.getAttribute('data-duration') || (window.MARTEO_CONFIG || {}).slideDuration || 6000), 0));
-  const frames = Math.round(total / 1000 * FPS) - 2; // stop just before the loop restarts
+  const limit = Number(process.env.DURATION) * 1000;
+  const frames = limit > 0 ? Math.round(Math.min(limit, total) / 1000 * FPS)
+                           : Math.round(total / 1000 * FPS) - 2; // stop just before the loop restarts
   const fadeOut = (frames / FPS - 0.7).toFixed(2);
   console.log(`slides total ${total / 1000}s -> ${frames} frames @ ${FPS}fps`);
 
