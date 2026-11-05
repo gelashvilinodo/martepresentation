@@ -3,8 +3,8 @@
 ყველა ხმა აქვე სინთეზირდება, გარე ფაილები და ლიცენზიები არ სჭირდება.
 
   python3 tools/logo-sfx.py video/raw-sfx.wav
-  # ხმის დონე -18 LUFS-მდე (ტელეფონი / სოციალური ქსელები):
-  ffmpeg -i video/raw-sfx.wav -af "acompressor=threshold=-24dB:ratio=2:attack=10:release=200:makeup=2,loudnorm=I=-18:TP=-2:LRA=11" -ar 48000 video/marteo-logo-sfx.wav
+  # ხმის დონე -24 LUFS-მდე (ჩუმი, ფონური) (ტელეფონი / სოციალური ქსელები):
+  ffmpeg -i video/raw-sfx.wav -af "acompressor=threshold=-24dB:ratio=2:attack=10:release=200:makeup=2,loudnorm=I=-24:TP=-6:LRA=11" -ar 48000 video/marteo-logo-sfx.wav
   ffmpeg -i video/marteo-logo.mp4 -i video/marteo-logo-sfx.wav -c:v copy -c:a aac -b:a 192k -shortest video/marteo-logo-sound.mp4
 
 დროები ემთხვევა index.html-ის ლოგოს ანიმაციას (--ld:.2s, პირველი სლაიდი).
@@ -119,21 +119,19 @@ def glow(d=2.0):
 
 
 # 1) tile drifts in: soft swoosh -> pillowy landing (~0.88s)
-wl, wr = airy(0.9, 200, 1500, q=0.7, lp=2200, shape=0.8, pan_from=-0.4, pan_to=0.0)
-place_stereo(wl, wr, 0.0, 0.7)
-place(pillow(), 0.84, 0.6)
+wl, wr = airy(1.0, 200, 1100, q=0.7, lp=1500, shape=1.3, pan_from=-0.3, pan_to=0.0)
+place_stereo(wl, wr, 0.0, 0.28)
+place(pillow(), 0.84, 0.3)
 
 # 2) the "M" draws itself: faint breath of air
 sl, sr_ = airy(0.95, 1200, 3500, q=0.8, lp=4000, pan_from=-0.25, pan_to=0.25)
-place_stereo(sl, sr_, 0.62, 0.18)
+place_stereo(sl, sr_, 0.62, 0.06)
 
 # 3) three bars grow: soft rising notes (C - E - G)
 for at, f, pan in [(1.45, 523.25, -0.2), (1.6, 659.25, 0.0), (1.75, 783.99, 0.2)]:
     place(note(f), at, 0.2, pan)
 
-# 4) wordmark appears: airy swell + gentle sparkle
-rl, rr = airy(0.9, 500, 3000, q=0.7, lp=3500, shape=1.4, pan_from=0.3, pan_to=-0.1)
-place_stereo(rl, rr, 1.55, 0.4)
+# 4) wordmark appears: gentle sparkle only (no second swoosh)
 g1 = glow()
 place(g1, 2.3, 0.14, -0.25)
 place(g1, 2.34, 0.14, 0.25)
