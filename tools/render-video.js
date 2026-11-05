@@ -57,16 +57,29 @@ function serve() {
     .reduce((s, el) => s + (+el.getAttribute('data-duration') || (window.MARTEO_CONFIG || {}).slideDuration || 6000), 0));
   const limit = Number(process.env.DURATION) * 1000;
   const frames = limit > 0 ? Math.round(Math.min(limit, total) / 1000 * FPS)
-                           : Math.round(total / 1000 * FPS) - 2; // stop just before the loop restarts
+                           : Math.round(total / 1000 * FPS);
   const fadeOut = (frames / FPS - 0.7).toFixed(2);
   console.log(`slides total ${total / 1000}s -> ${frames} frames @ ${FPS}fps`);
 
-  // let the page finish starting, then restart slide 1 so recording begins exactly at t = 0
+  // Let the page finish starting, then take over: autoplay off, slide changes driven
+  // by the virtual clock at exact slide boundaries, recording starts at t = 0.
   await page.clock.runFor(500);
   await page.evaluate(() => {
-    window.MarteoPresentation.go(0);
+    const P = window.MarteoPresentation;
+    P.pause();
+    for (const a of document.getAnimations()) if (a instanceof CSSTransition) a.finish();
+    const def = (window.MARTEO_CONFIG || {}).slideDuration || 6000;
+    let acc = 0;
+    window.__starts = Array.from(document.querySelectorAll('.slide')).map(el => {
+      const s = acc; acc += (+el.getAttribute('data-duration') || def); return s;
+    });
+    window.__next = 1;
+    P.go(0);
     window.__vt = 0;
     window.__sync = () => {
+      while (window.__next < window.__starts.length && window.__vt >= window.__starts[window.__next] - 1e-6) {
+        P.go(window.__next++);
+      }
       for (const a of document.getAnimations()) {
         if (a.__born === undefined) { a.__born = window.__vt; a.pause(); }
         a.currentTime = window.__vt - a.__born;
