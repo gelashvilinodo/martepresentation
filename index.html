@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="ka">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>მართეო — პრეზენტაცია</title>
+<meta name="description" content="მართეო — ბიზნესის მართვის მარტივი პლატფორმა. ანიმაციური პრეზენტაცია.">
+<link rel="icon" type="image/png" href="assets/marteo-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0D1828;
+  --navy-2:#132339;
+  --navy-3:#1B3150;
+  --blue:#4777BB;
+  --sky:#69A9DC;
+  --white:#FFFFFF;
+  --ink-soft:rgba(255,255,255,.72);
+  --ink-mute:rgba(255,255,255,.5);
+  --line:rgba(255,255,255,.12);
+  --danger:#E8737A;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --ease-in-out:cubic-bezier(.65,0,.35,1);
+  --font:'Noto Sans Georgian','FiraGO','BPG Arial',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#060C16;overflow:hidden}
+body{font-family:var(--font);color:var(--white);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+svg{display:block}
+
+/* ---------- Player & stage ---------- */
+.player{position:fixed;inset:0;background:#060C16;user-select:none;-webkit-user-select:none;outline:none}
+.player.hide-cursor{cursor:none}
+.stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;
+  background:
+    radial-gradient(1200px 700px at 85% 10%, rgba(71,119,187,.20), transparent 60%),
+    radial-gradient(900px 600px at 5% 100%, rgba(105,169,220,.12), transparent 60%),
+    linear-gradient(160deg,#0F1C30 0%,var(--navy) 55%,#0A1322 100%);
+  opacity:0;transition:opacity .8s ease}
+.ready .stage{opacity:1}
+.grid-bg{position:absolute;inset:0;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:80px 80px;opacity:.28;
+  -webkit-mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 20%,transparent 75%);
+          mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 20%,transparent 75%)}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;animation:orb 22s ease-in-out infinite alternate}
+.orb.o1{width:620px;height:620px;background:var(--blue);left:-180px;top:-200px}
+.orb.o2{width:520px;height:520px;background:var(--sky);right:-160px;bottom:-200px;animation-duration:28s;animation-delay:-6s;opacity:.22}
+@keyframes orb{to{transform:translate(160px,120px) scale(1.15)}}
+.player.paused .orb{animation-play-state:paused}
+
+/* persistent header on content slides */
+.chrome{position:absolute;left:96px;right:96px;top:52px;display:flex;align-items:center;justify-content:space-between;z-index:5;
+  transition:opacity .6s ease, transform .6s var(--ease)}
+.chrome .brand{display:flex;align-items:center;gap:16px}
+.chrome .brand .logo-svg{width:46px;height:46px}
+.chrome .brand img{height:20px;opacity:.95}
+.chrome .chapter{font-size:20px;font-weight:600;color:var(--ink-mute);letter-spacing:.04em;display:flex;gap:14px;align-items:center}
+.chrome .chapter b{color:var(--sky);font-weight:700;font-variant-numeric:tabular-nums}
+.stage.no-chrome .chrome{opacity:0;transform:translateY(-16px)}
+
+/* ---------- Slides ---------- */
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;z-index:1}
+.slide.active{opacity:1;visibility:visible;z-index:3;animation:s-in-fade 1s var(--ease) both}
+.slide.leaving{opacity:1;visibility:visible;z-index:2;animation:s-out-fade .9s var(--ease) both;pointer-events:none}
+.slide.active[data-tr="zoom"]{animation-name:s-in-zoom}
+.slide.active[data-tr="slide"]{animation-name:s-in-slide}
+.slide.leaving[data-tr="zoom"]{animation-name:s-out-zoom}
+.slide.leaving[data-tr="slide"]{animation-name:s-out-slide}
+.stage.back .slide.active[data-tr="slide"]{animation-name:s-in-slide-back}
+.stage.back .slide.leaving[data-tr="slide"]{animation-name:s-out-slide-back}
+@keyframes s-in-fade{from{opacity:0}to{opacity:1}}
+@keyframes s-out-fade{from{opacity:1}to{opacity:0}}
+@keyframes s-in-zoom{from{opacity:0;transform:scale(1.08);filter:blur(10px)}to{opacity:1;transform:none;filter:none}}
+@keyframes s-out-zoom{from{opacity:1;transform:none}to{opacity:0;transform:scale(.93);filter:blur(8px)}}
+@keyframes s-in-slide{from{opacity:0;transform:translateX(140px)}to{opacity:1;transform:none}}
+@keyframes s-out-slide{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-140px)}}
+@keyframes s-in-slide-back{from{opacity:0;transform:translateX(-140px)}to{opacity:1;transform:none}}
+@keyframes s-out-slide-back{from{opacity:1;transform:none}to{opacity:0;transform:translateX(140px)}}
+
+/* Paused = everything on the current slide freezes, like a video */
+.slide.frozen,.slide.frozen *,.slide.frozen *::before,.slide.frozen *::after{animation-play-state:paused!important}
+
+/* Element entrance animations: final state is the default style,
+   the animation (fill: both) only runs while the slide is active. */
+.slide.active .a{animation:var(--an,a-up) var(--dur,.9s) var(--ease) var(--d,0s) both}
+.a.fade{--an:a-fade}.a.left{--an:a-left}.a.right{--an:a-right}.a.pop{--an:a-pop}
+.a.zoom{--an:a-zoom}.a.down{--an:a-down}.a.rise{--an:a-rise;--dur:1s}.a.blur{--an:a-blur}
+.a.burst{--an:a-burst;--dur:1.1s}.a.draw{--an:a-draw;--dur:1s}
+@keyframes a-up{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+@keyframes a-down{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:none}}
+@keyframes a-fade{from{opacity:0}to{opacity:1}}
+@keyframes a-left{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:none}}
+@keyframes a-right{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:none}}
+@keyframes a-pop{0%{opacity:0;transform:scale(.4)}70%{opacity:1;transform:scale(1.08)}100%{opacity:1;transform:none}}
+@keyframes a-zoom{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+@keyframes a-rise{from{opacity:0;transform:translateY(220px)}to{opacity:1;transform:none}}
+@keyframes a-blur{from{opacity:0;filter:blur(16px);transform:translateY(20px)}to{opacity:1;filter:none;transform:none}}
+@keyframes a-burst{0%{opacity:0;transform:translate(var(--fx,0),var(--fy,0)) scale(.3)}60%{opacity:1}100%{opacity:1;transform:none}}
+@keyframes a-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.draw{stroke-dasharray:1;stroke-dashoffset:0}
+
+/* ---------- Typography ---------- */
+.eyebrow{display:inline-flex;align-items:center;gap:14px;font-size:24px;font-weight:700;letter-spacing:.08em;color:var(--sky)}
+.eyebrow::before{content:"";width:44px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--sky),var(--blue))}
+.h1{font-size:96px;line-height:1.12;font-weight:800;letter-spacing:-.01em}
+.h2{font-size:76px;line-height:1.15;font-weight:800;letter-spacing:-.01em}
+.lead{font-size:32px;line-height:1.55;color:var(--ink-soft);font-weight:400}
+.grad{background:linear-gradient(90deg,#9CCBF0,var(--sky) 40%,var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.ico{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- Logo (dark-background variant: white tile, navy M) ---------- */
+.logo-svg .lg-box{fill:#fff}
+.logo-svg .lg-m{fill:var(--navy);stroke:var(--navy);stroke-width:8;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:0}
+.logo-svg .lg-b1{fill:var(--blue)}.logo-svg .lg-b2{fill:var(--sky)}.logo-svg .lg-b3{fill:var(--navy)}
+.logo-svg .lg-bar{transform-box:fill-box;transform-origin:50% 100%}
+.logo-svg .lg-box{transform-box:fill-box;transform-origin:50% 50%}
+.slide.active .logo-anim .lg-box{animation:lg-box 1s var(--ease) calc(var(--ld,0s)) both}
+.slide.active .logo-anim .lg-m{animation:lg-draw 1.3s var(--ease-in-out) calc(var(--ld,0s) + .45s) both}
+.slide.active .logo-anim .lg-b1{animation:lg-grow .7s var(--ease) calc(var(--ld,0s) + 1.15s) both}
+.slide.active .logo-anim .lg-b2{animation:lg-grow .7s var(--ease) calc(var(--ld,0s) + 1.3s) both}
+.slide.active .logo-anim .lg-b3{animation:lg-grow .7s var(--ease) calc(var(--ld,0s) + 1.45s) both}
+@keyframes lg-box{0%{opacity:0;transform:scale(.2) rotate(-20deg)}70%{opacity:1;transform:scale(1.06) rotate(2deg)}100%{opacity:1;transform:none}}
+@keyframes lg-draw{0%{stroke-dashoffset:1;fill-opacity:0}65%{stroke-dashoffset:0;fill-opacity:0}100%{stroke-dashoffset:0;fill-opacity:1}}
+@keyframes lg-grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+/* ---------- 1. Intro ---------- */
+.s-intro{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.s-intro .mark{position:relative;width:300px;height:300px;margin-bottom:64px}
+.s-intro .mark .logo-svg{width:100%;height:100%;position:relative;z-index:1;filter:drop-shadow(0 30px 60px rgba(0,0,0,.45))}
+.s-intro .mark::before{content:"";position:absolute;inset:-60px;border-radius:50%;
+  background:radial-gradient(circle,rgba(105,169,220,.45),transparent 65%)}
+.slide.active.s-intro .mark::before{animation:halo 3s ease-out .4s both}
+@keyframes halo{0%{opacity:0;transform:scale(.4)}40%{opacity:1}100%{opacity:.55;transform:scale(1.2)}}
+.s-intro .wordmark{height:76px;margin-bottom:56px}
+.s-intro .slogan{font-size:56px;font-weight:600;min-height:80px;color:#EAF3FB}
+.caret{display:inline-block;width:4px;height:.95em;margin-left:6px;vertical-align:-.12em;background:var(--sky);border-radius:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.ring{position:absolute;left:50%;top:50%;border:1px solid rgba(105,169,220,.25);border-radius:50%;transform:translate(-50%,-50%)}
+.slide.active .ring{animation:ring 6s ease-out both}
+.ring.r1{width:700px;height:700px}.ring.r2{width:1100px;height:1100px;animation-delay:.3s!important}.ring.r3{width:1550px;height:1550px;animation-delay:.6s!important}
+@keyframes ring{from{opacity:0;transform:translate(-50%,-50%) scale(.6)}30%{opacity:1}to{opacity:.6;transform:translate(-50%,-50%) scale(1)}}
+
+/* ---------- 2. Problem ---------- */
+.s-problem{display:grid;grid-template-columns:1fr 700px;gap:60px;align-items:center;padding:140px 110px 110px}
+.s-problem .h2{font-size:64px}
+.s-problem .h2{margin:24px 0 26px}
+.s-problem .lead{max-width:900px;margin-bottom:36px;font-size:28px}
+.pains{list-style:none;display:flex;flex-direction:column;gap:22px}
+.pains li{display:flex;align-items:center;gap:22px;font-size:27px;font-weight:500}
+.pains .x{flex:none;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:rgba(232,115,122,.14);color:var(--danger);font-size:28px;border:1px solid rgba(232,115,122,.3)}
+.chaos{position:relative;height:720px}
+.paper{position:absolute;background:#fff;border-radius:22px;box-shadow:0 40px 80px rgba(0,0,0,.45);color:var(--navy);padding:28px}
+.paper.sheet{width:420px;height:300px;left:20px;top:60px;transform:rotate(-8deg)}
+.paper.sheet .row{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.paper.sheet .row span{height:24px;border-radius:5px;background:#E7EEF7}
+.paper.sheet .row.h span{background:#C8D8EC}
+.paper.sheet .row span.err{background:rgba(232,115,122,.35)}
+.paper.note{width:300px;height:340px;right:0;top:20px;transform:rotate(7deg);background:#F6F8FB}
+.paper.note .ln{height:3px;background:#D7E1EE;margin:26px 0;border-radius:2px}
+.paper.note .scribble{font-size:30px;font-weight:700;color:#7B8BA3;transform:rotate(-4deg)}
+.paper.sticky{width:250px;height:230px;left:120px;bottom:70px;transform:rotate(5deg);background:#FCE58A;font-size:30px;font-weight:700;line-height:1.35;padding:30px}
+.paper.chat{width:340px;right:60px;bottom:110px;transform:rotate(-4deg);padding:24px;display:flex;flex-direction:column;gap:12px;background:#EEF4FB}
+.paper.chat .b{background:#fff;border-radius:16px 16px 16px 4px;padding:12px 16px;font-size:20px;font-weight:500;box-shadow:0 2px 6px rgba(13,24,40,.08);max-width:85%}
+.paper.chat .b.me{align-self:flex-end;background:var(--blue);color:#fff;border-radius:16px 16px 4px 16px}
+.qm{position:absolute;font-size:120px;font-weight:900;color:var(--danger);opacity:.9;text-shadow:0 10px 40px rgba(232,115,122,.4)}
+.slide.active .float{animation-name:var(--an,a-up),float!important;animation-duration:var(--dur,.9s),4s!important;
+  animation-delay:var(--d,0s),calc(var(--d,0s) + .9s)!important;animation-timing-function:var(--ease),ease-in-out!important;
+  animation-iteration-count:1,infinite!important;animation-direction:normal,alternate!important;animation-fill-mode:both,none!important}
+@keyframes float{from{translate:0 0}to{translate:0 -18px}}
+
+/* ---------- 3. Solution ---------- */
+.s-solution .top{position:absolute;left:0;right:0;top:140px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:26px}
+.s-solution .h2{max-width:1500px;font-size:68px}
+.s-solution .links{position:absolute;inset:0;width:1920px;height:1080px}
+.s-solution .links path{fill:none;stroke:url(#lnk);stroke-width:3}
+.s-solution .core{position:absolute;left:845px;top:500px;width:230px;height:230px}
+.s-solution .core .logo-svg{width:100%;height:100%;filter:drop-shadow(0 24px 50px rgba(0,0,0,.5))}
+.s-solution .core::before{content:"";position:absolute;inset:-26px;border-radius:52px;border:2px solid rgba(105,169,220,.35)}
+.slide.active.s-solution .core::before{animation:pulse 2.2s ease-out 1.2s infinite}
+@keyframes pulse{0%{opacity:.9;transform:scale(.92)}100%{opacity:0;transform:scale(1.35)}}
+.benefit{position:absolute;width:460px;display:flex;gap:24px;align-items:center;padding:28px 30px;border-radius:26px;
+  background:linear-gradient(160deg,rgba(27,49,80,.95),rgba(19,35,57,.95));border:1px solid rgba(105,169,220,.25);box-shadow:0 30px 60px rgba(0,0,0,.35)}
+.benefit .ib{flex:none;width:76px;height:76px;border-radius:20px;display:grid;place-items:center;font-size:38px;color:#fff;background:linear-gradient(135deg,var(--sky),var(--blue))}
+.benefit h3{font-size:30px;font-weight:700;margin-bottom:8px;line-height:1.25}
+.benefit p{font-size:22px;color:var(--ink-soft);line-height:1.45}
+.benefit.b1{left:150px;top:540px;--fx:700px;--fy:20px}
+.benefit.b2{right:150px;top:540px;--fx:-700px;--fy:20px}
+.benefit.b3{left:730px;top:830px;--fx:0px;--fy:-240px}
+
+/* ---------- 4. How it works ---------- */
+.s-how{padding:170px 120px 0;text-align:center}
+.s-how .h2{margin-top:24px}
+.steps{display:flex;align-items:center;justify-content:center;gap:0;margin-top:110px}
+.step{width:430px;padding:48px 40px 44px;border-radius:30px;background:linear-gradient(170deg,rgba(27,49,80,.9),rgba(19,35,57,.9));border:1px solid var(--line);position:relative;text-align:left}
+.step .num{position:absolute;top:30px;right:36px;font-size:64px;font-weight:900;color:rgba(105,169,220,.18);font-variant-numeric:tabular-nums}
+.step .si{width:92px;height:92px;border-radius:26px;display:grid;place-items:center;font-size:44px;background:rgba(105,169,220,.14);color:var(--sky);border:1px solid rgba(105,169,220,.3);margin-bottom:34px}
+.step h3{font-size:36px;font-weight:700;margin-bottom:14px}
+.step p{font-size:24px;color:var(--ink-soft);line-height:1.5}
+.arrow{width:120px;height:60px;flex:none}
+.arrow path{fill:none;stroke:var(--sky);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.arrow .line{stroke-dasharray:6 10}
+.arrow-wrap{position:relative;width:120px;height:60px;flex:none;margin:0 14px}
+.arrow-wrap svg{position:absolute;inset:0;width:100%;height:100%}
+.arrow-wrap .a.pop{transform-box:fill-box;transform-origin:50% 50%}
+.arrow-wrap .mask-line{stroke:var(--sky);stroke-width:4;fill:none;stroke-linecap:round}
+
+/* ---------- 5. Demo ---------- */
+.s-demo{padding:0 0 0 120px}
+.s-demo .copy{position:absolute;left:120px;top:300px;width:560px}
+.s-demo .h2{margin:24px 0 28px;font-size:72px}
+.s-demo .feature{display:flex;gap:16px;align-items:center;font-size:26px;font-weight:500;margin-top:18px;color:#E3EEF8}
+.s-demo .feature .ck{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(105,169,220,.16);color:var(--sky);font-size:22px;flex:none}
+.laptop{position:absolute;left:720px;top:190px;width:1060px}
+.laptop .lid{background:#0A0F18;border-radius:28px 28px 8px 8px;padding:18px;border:2px solid #2A3A52;box-shadow:0 50px 100px rgba(0,0,0,.55)}
+.laptop .cam{width:8px;height:8px;border-radius:50%;background:#2A3A52;margin:-8px auto 6px}
+.laptop .base{height:30px;width:1220px;margin-left:-80px;background:linear-gradient(#3A4B63,#1D2A3D);border-radius:0 0 30px 30px;position:relative}
+.laptop .base::before{content:"";position:absolute;left:50%;top:0;width:180px;height:12px;transform:translateX(-50%);background:#12202F;border-radius:0 0 12px 12px}
+.screen{position:relative;overflow:hidden;background:#F3F6FA}
+.laptop .screen{height:620px;border-radius:6px}
+.phone{position:absolute;left:1600px;top:440px;width:290px;height:600px;border-radius:50px;background:#0A0F18;padding:12px;border:2px solid #2A3A52;box-shadow:0 40px 90px rgba(0,0,0,.6)}
+.phone .screen{height:100%;border-radius:38px}
+.phone .notch{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:90px;height:24px;border-radius:14px;background:#0A0F18;z-index:3}
+.scroller{position:absolute;left:0;top:0;width:100%}
+.scroller img{display:block;width:100%;height:auto}
+.slide.active .scroller{animation:scroll-y var(--sdur,4.4s) var(--ease-in-out) var(--sd,1.6s) both}
+@keyframes scroll-y{from{transform:translateY(0)}to{transform:translateY(calc(-1 * var(--dist,0px)))}}
+/* mock dashboard (desktop) */
+.mk{display:grid;grid-template-columns:190px 1fr;min-height:1260px;color:var(--navy);font-size:14px}
+.mk .side{background:var(--navy);color:#fff;padding:22px 16px}
+.mk .side .lg{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;margin-bottom:28px;letter-spacing:.12em}
+.mk .side .lg .logo-svg{width:30px;height:30px}
+.mk .side .it{padding:10px 12px;border-radius:10px;color:rgba(255,255,255,.65);margin-bottom:4px;font-weight:500}
+.mk .side .it.on{background:rgba(105,169,220,.18);color:#fff}
+.mk .main{padding:22px 26px}
+.mk .tb{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.mk .tb h4{font-size:22px;font-weight:800}
+.mk .tb .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--blue))}
+.mk .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+.mk .card{background:#fff;border-radius:14px;padding:16px 18px;box-shadow:0 1px 3px rgba(13,24,40,.06)}
+.mk .kpi small{color:#7A889C;font-weight:500}
+.mk .kpi b{display:block;font-size:24px;font-weight:800;margin:6px 0 4px}
+.mk .kpi i{font-style:normal;color:#2E9E6A;font-weight:700;font-size:13px}
+.mk .chart{height:250px;display:flex;flex-direction:column;margin-bottom:16px}
+.mk .chart .bars{flex:1;display:flex;align-items:flex-end;gap:12px;padding-top:14px}
+.mk .chart .bars span{flex:1;border-radius:6px 6px 2px 2px;background:linear-gradient(var(--sky),var(--blue))}
+.mk .chart .bars span:nth-child(3n){background:var(--navy)}
+.mk .row2{display:grid;grid-template-columns:1fr 1.4fr;gap:14px;margin-bottom:16px}
+.mk .donut{width:150px;height:150px;border-radius:50%;margin:16px auto;background:conic-gradient(var(--blue) 0 45%,var(--sky) 0 75%,var(--navy) 0 100%);display:grid;place-items:center}
+.mk .donut::after{content:"";width:86px;height:86px;border-radius:50%;background:#fff}
+.mk .tr{display:grid;grid-template-columns:1.6fr 1fr .8fr;padding:10px 0;border-bottom:1px solid #EDF1F6;align-items:center}
+.mk .tr.th{color:#7A889C;font-weight:600}
+.mk .pill{display:inline-block;padding:3px 10px;border-radius:20px;background:#E3F4EC;color:#2E9E6A;font-weight:700;font-size:12px}
+.mk .pill.w{background:#FFF3DC;color:#B7791F}
+.mk .ttl{font-weight:800;font-size:16px}
+/* mock mobile */
+.mm{padding:44px 16px 20px;min-height:1150px;color:var(--navy);font-size:13px}
+.mm .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.mm .hd b{font-size:18px;font-weight:800}
+.mm .hd .logo-svg{width:30px;height:30px}
+.mm .big{background:var(--navy);color:#fff;border-radius:18px;padding:18px;margin-bottom:12px}
+.mm .big small{opacity:.7}.mm .big b{display:block;font-size:26px;font-weight:800;margin:6px 0}
+.mm .big .sp{display:flex;align-items:flex-end;gap:6px;height:60px;margin-top:10px}
+.mm .big .sp span{flex:1;background:var(--sky);border-radius:3px}
+.mm .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.mm .c{background:#fff;border-radius:14px;padding:12px;box-shadow:0 1px 3px rgba(13,24,40,.06)}
+.mm .c b{display:block;font-size:18px;font-weight:800;margin-top:4px}
+.mm .li{display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:12px;padding:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(13,24,40,.06)}
+.mm .li i{font-style:normal;font-weight:700;color:var(--blue)}
+
+/* ---------- 6. Audience ---------- */
+.s-who{padding:170px 120px 0;text-align:center}
+.s-who .h2{margin-top:24px}
+.cards{display:flex;justify-content:center;gap:56px;margin-top:90px}
+.who{width:500px;padding:52px 44px;border-radius:34px;text-align:left;position:relative;overflow:hidden;
+  background:linear-gradient(170deg,rgba(27,49,80,.95),rgba(16,30,49,.95));border:1px solid rgba(105,169,220,.2);box-shadow:0 40px 80px rgba(0,0,0,.35)}
+.who::after{content:"";position:absolute;right:-80px;top:-80px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(105,169,220,.25),transparent 70%)}
+.who .wi{width:104px;height:104px;border-radius:30px;display:grid;place-items:center;font-size:50px;color:#fff;background:linear-gradient(135deg,var(--sky),var(--blue));margin-bottom:40px;box-shadow:0 18px 40px rgba(71,119,187,.45)}
+.who h3{font-size:38px;font-weight:800;line-height:1.25;margin-bottom:18px}
+.who p{font-size:26px;line-height:1.5;color:var(--ink-soft)}
+
+/* ---------- 7. Stats ---------- */
+.s-stats{padding:190px 120px 0;text-align:center}
+.s-stats .h2{margin-top:24px}
+.stats{display:flex;justify-content:center;gap:30px;margin-top:120px;padding:0 40px}
+.stat{flex:1 1 0;min-width:0;padding:40px 20px;border-left:1px solid var(--line)}
+.stat:first-child{border-left:0}
+.stat .n{display:inline-block;font-size:124px;white-space:nowrap;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat .l{font-size:30px;color:var(--ink-soft);margin-top:24px;font-weight:500}
+
+/* ---------- 8. Contact ---------- */
+.s-contact{padding:180px 120px 0;text-align:center}
+.s-contact .h2{margin:24px 0 24px}
+.contacts{display:flex;justify-content:center;flex-wrap:wrap;gap:30px;margin-top:90px}
+.contact{width:300px;padding:44px 20px 40px;border-radius:30px;background:rgba(27,49,80,.6);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:10px;color:inherit;text-decoration:none}
+.contact .ci{width:110px;height:110px;border-radius:50%;display:grid;place-items:center;font-size:48px;color:#fff;margin-bottom:18px;
+  background:radial-gradient(circle at 30% 30%,var(--sky),var(--blue));box-shadow:0 0 0 12px rgba(105,169,220,.1),0 20px 40px rgba(71,119,187,.4)}
+.contact small{font-size:22px;color:var(--ink-mute);font-weight:500}
+.contact b{font-size:26px;font-weight:700;word-break:break-word}
+
+/* ---------- 9. Outro ---------- */
+.s-end{display:grid;grid-template-columns:1fr 460px;align-items:center;gap:100px;padding:0 180px 120px}
+.s-end .h1{font-size:118px;margin:30px 0 30px}
+.urlpill{display:inline-flex;align-items:center;gap:18px;padding:22px 36px 22px 26px;border-radius:999px;font-size:36px;font-weight:700;
+  background:linear-gradient(135deg,var(--sky),var(--blue));box-shadow:0 24px 60px rgba(71,119,187,.45);direction:ltr}
+.urlpill .ico{font-size:40px}
+.qrcard{background:#fff;border-radius:36px;padding:34px;box-shadow:0 50px 100px rgba(0,0,0,.5);text-align:center;position:relative}
+.qrcard .qr{width:392px;height:392px;position:relative}
+.qrcard .qr svg{width:100%;height:100%}
+.qrcard .qr .qlogo{position:absolute;left:50%;top:50%;width:84px;height:84px;transform:translate(-50%,-50%);background:#fff;border-radius:18px;padding:8px}
+.qrcard .qr .qlogo .logo-svg .lg-box{fill:var(--navy)}
+.qrcard .qr .qlogo .logo-svg .lg-m,.qrcard .qr .qlogo .logo-svg .lg-b3{fill:#fff;stroke:#fff}
+.qrcard p{color:var(--navy);font-size:24px;font-weight:600;margin-top:20px}
+.slide.active .qr svg{animation:qr-wipe 1.4s var(--ease-in-out) 1.6s both}
+@keyframes qr-wipe{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+.qrcard::after{content:"";position:absolute;left:34px;right:34px;height:4px;top:34px;border-radius:4px;background:var(--sky);box-shadow:0 0 18px var(--sky);opacity:0}
+.slide.active .qrcard::after{animation:scanline 1.4s var(--ease-in-out) 1.6s both}
+@keyframes scanline{0%{opacity:1;transform:translateY(0)}90%{opacity:1}100%{opacity:0;transform:translateY(392px)}}
+.endlogo{position:absolute;left:0;right:0;bottom:84px;display:flex;align-items:center;justify-content:center;gap:28px}
+.endlogo .logo-svg{width:96px;height:96px}
+.endlogo img{height:38px}
+
+/* ---------- Controls overlay ---------- */
+.ui{position:absolute;left:0;right:0;bottom:0;padding:40px 24px 16px;z-index:10;
+  background:linear-gradient(transparent,rgba(3,8,15,.75));transition:opacity .35s ease, transform .35s ease}
+.player.idle .ui{opacity:0;transform:translateY(12px);pointer-events:none}
+.segs{display:flex;gap:6px;margin-bottom:12px}
+.seg{flex:1;height:5px;border-radius:5px;background:rgba(255,255,255,.22);overflow:hidden;cursor:pointer;position:relative}
+.seg::before{content:"";position:absolute;inset:-8px 0}
+.seg i{display:block;height:100%;width:0;background:#fff;border-radius:5px}
+.seg.done i{width:100%}
+.bar{display:flex;align-items:center;gap:6px}
+.btn{width:44px;height:44px;border:0;border-radius:12px;background:transparent;color:#fff;display:grid;place-items:center;cursor:pointer;font-size:22px;transition:background .2s}
+.btn:hover{background:rgba(255,255,255,.12)}
+.btn:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+.btn .ico{width:24px;height:24px}
+.btn .fillico{fill:currentColor;stroke:none}
+.count{color:rgba(255,255,255,.8);font-size:15px;font-weight:600;margin-left:8px;font-variant-numeric:tabular-nums}
+.title{color:rgba(255,255,255,.6);font-size:15px;margin-left:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spacer{flex:1}
+.flash{position:absolute;left:50%;top:50%;width:96px;height:96px;margin:-48px 0 0 -48px;border-radius:50%;background:rgba(3,8,15,.55);
+  display:grid;place-items:center;color:#fff;opacity:0;pointer-events:none;z-index:9}
+.flash .ico{width:40px;height:40px}
+.flash.go{animation:flash .7s ease-out}
+@keyframes flash{from{opacity:1;transform:scale(.8)}to{opacity:0;transform:scale(1.4)}}
+.player.pseudo-fs{z-index:9999}
+
+@media (max-width:640px){
+  .ui{padding:28px 10px 8px}
+  .title{display:none}
+  .btn{width:40px;height:40px}
+}
+@media (prefers-reduced-motion:reduce){
+  .orb{animation:none}
+  .slide.active,.slide.leaving{animation-duration:.01s!important}
+}
+</style>
+</head>
+<body>
+
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="lnk" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#69A9DC" stop-opacity=".9"/><stop offset="1" stop-color="#4777BB" stop-opacity=".5"/></linearGradient>
+  </defs>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-userplus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></symbol>
+  <symbol id="i-package" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5V8z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></symbol>
+  <symbol id="i-store" viewBox="0 0 24 24"><path d="M4 10v10h16V10"/><path d="M2 10l2-6h16l2 6z"/><path d="M10 20v-5h4v5"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></symbol>
+  <symbol id="i-facebook" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></symbol>
+  <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></symbol>
+  <symbol id="i-linkedin" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1.5"/><rect x="14" y="4" width="5" height="16" rx="1.5"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></symbol>
+  <symbol id="i-shrink" viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></symbol>
+</svg>
+
+<div class="player" id="player" tabindex="0" aria-roledescription="პრეზენტაცია" aria-label="მართეოს პრეზენტაცია">
+  <div class="stage" id="stage">
+    <div class="orb o1"></div><div class="orb o2"></div>
+    <div class="grid-bg"></div>
+
+    <div class="chrome" aria-hidden="true">
+      <div class="brand"><span data-logo></span><img src="assets/wordmark-white.png" alt=""></div>
+      <div class="chapter"><b id="chNum">02</b><span id="chName"></span></div>
+    </div>
+
+    <!-- 1. გახსნა -->
+    <section class="slide s-intro" data-tr="zoom" data-title="მართეო" aria-label="გახსნა">
+      <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+      <div class="mark logo-anim" style="--ld:.2s"><span data-logo></span></div>
+      <img class="wordmark a blur" style="--d:1.7s" src="assets/wordmark-white.png" alt="MARTEO">
+      <div class="slogan"><span data-type="მართე ბიზნესი ჭკვიანურად" data-start="2500" data-speed="60"></span><span class="caret"></span></div>
+    </section>
+
+    <!-- 2. პრობლემა -->
+    <section class="slide s-problem" data-tr="slide" data-title="პრობლემა" aria-label="პრობლემა">
+      <div>
+        <div class="eyebrow a left" style="--d:.3s">პრობლემა</div>
+        <h2 class="h2 a" style="--d:.5s">მონაცემები ყველგანაა,<br><span class="grad">სრული სურათი — არსად</span></h2>
+        <p class="lead a" style="--d:1s">ცხრილები, რვეულები და მესენჯერები — ბიზნესის მართვას უამრავი დრო მიაქვს, გადაწყვეტილებები კი ხშირად ინტუიციით მიიღება.</p>
+        <ul class="pains">
+          <li class="a left" style="--d:1.6s"><span class="x"><svg class="ico"><use href="#i-x"/></svg></span>ინფორმაცია სხვადასხვა ადგილასაა მიმოფანტული</li>
+          <li class="a left" style="--d:1.95s"><span class="x"><svg class="ico"><use href="#i-x"/></svg></span>ხელით აღრიცხვა შეცდომებს იწვევს</li>
+          <li class="a left" style="--d:2.3s"><span class="x"><svg class="ico"><use href="#i-x"/></svg></span>არ ჩანს, რა მუშაობს და რა — არა</li>
+        </ul>
+      </div>
+      <div class="chaos" aria-hidden="true">
+        <div class="paper sheet a zoom float" style="--d:.7s">
+          <div class="row h"><span></span><span></span><span></span></div>
+          <div class="row"><span></span><span></span><span class="err"></span></div>
+          <div class="row"><span></span><span class="err"></span><span></span></div>
+          <div class="row"><span></span><span></span><span></span></div>
+          <div class="row"><span></span><span></span><span class="err"></span></div>
+          <div class="row"><span></span><span></span><span></span></div>
+        </div>
+        <div class="paper note a zoom float" style="--d:1s">
+          <div class="scribble">შეკვეთები??</div>
+          <div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div>
+        </div>
+        <div class="paper chat a zoom float" style="--d:1.3s">
+          <div class="b">მარაგში კიდევ გვაქვს?</div>
+          <div class="b me">ვერ ვიპოვე ცხრილი…</div>
+          <div class="b">გუშინდელი გაყიდვები?</div>
+        </div>
+        <div class="paper sticky a zoom float" style="--d:1.6s">არ დაგავიწყდეს ანგარიში!</div>
+        <div class="qm a pop" style="--d:2.4s;left:-30px;top:390px">?</div>
+        <div class="qm a pop" style="--d:2.7s;left:650px;top:400px;font-size:90px">!</div>
+      </div>
+    </section>
+
+    <!-- 3. გადაწყვეტა -->
+    <section class="slide s-solution" data-tr="zoom" data-title="გადაწყვეტა" aria-label="გადაწყვეტა">
+      <div class="top">
+        <div class="eyebrow a" style="--d:.2s">გადაწყვეტა</div>
+        <h2 class="h2 a" style="--d:.4s">მართეო არის <span class="grad">ერთი პლატფორმა</span>,<br>სადაც შენი ბიზნესი სრულად ჩანს</h2>
+      </div>
+      <svg class="links" viewBox="0 0 1920 1080" aria-hidden="true">
+        <path class="draw a" pathLength="1" style="--d:1.6s" d="M960 615 L610 615"/>
+        <path class="draw a" pathLength="1" style="--d:1.9s" d="M960 615 L1310 615"/>
+        <path class="draw a" pathLength="1" style="--d:2.2s" d="M960 615 L960 830"/>
+      </svg>
+      <div class="core logo-anim a pop" style="--d:.9s;--ld:.9s"><span data-logo></span></div>
+      <div class="benefit b1 a burst" style="--d:1.8s"><div class="ib"><svg class="ico"><use href="#i-layers"/></svg></div><div><h3>ყველაფერი ერთ სივრცეში</h3><p>გაყიდვები, მარაგი და კლიენტები ერთად</p></div></div>
+      <div class="benefit b2 a burst" style="--d:2.1s"><div class="ib"><svg class="ico"><use href="#i-chart"/></svg></div><div><h3>ანალიტიკა რეალურ დროში</h3><p>მკაფიო რიცხვები სწორი გადაწყვეტილებისთვის</p></div></div>
+      <div class="benefit b3 a burst" style="--d:2.4s"><div class="ib"><svg class="ico"><use href="#i-clock"/></svg></div><div><h3>დაზოგილი დრო</h3><p>ნაკლები რუტინა — მეტი დრო ზრდისთვის</p></div></div>
+    </section>
+
+    <!-- 4. როგორ მუშაობს -->
+    <section class="slide s-how" data-tr="slide" data-title="როგორ მუშაობს" aria-label="როგორ მუშაობს">
+      <div class="eyebrow a" style="--d:.2s">როგორ მუშაობს</div>
+      <h2 class="h2 a" style="--d:.4s">სამი <span class="grad">მარტივი</span> ნაბიჯი</h2>
+      <div class="steps">
+        <div class="step a rise" style="--d:.9s"><span class="num">01</span><div class="si"><svg class="ico"><use href="#i-userplus"/></svg></div><h3>დარეგისტრირდი</h3><p>ანგარიშს რამდენიმე წუთში შექმნი</p></div>
+        <div class="arrow-wrap"><svg viewBox="0 0 120 60" aria-hidden="true"><path class="mask-line draw a" pathLength="1" style="--d:1.6s;--dur:.7s" d="M8 30 H104"/><path class="mask-line a pop" style="--d:2.2s;--dur:.4s" d="M92 16 L108 30 L92 44"/></svg></div>
+        <div class="step a rise" style="--d:1.9s"><span class="num">02</span><div class="si"><svg class="ico"><use href="#i-package"/></svg></div><h3>დაამატე მონაცემები</h3><p>პროდუქტები, გაყიდვები და კლიენტები</p></div>
+        <div class="arrow-wrap"><svg viewBox="0 0 120 60" aria-hidden="true"><path class="mask-line draw a" pathLength="1" style="--d:2.6s;--dur:.7s" d="M8 30 H104"/><path class="mask-line a pop" style="--d:3.2s;--dur:.4s" d="M92 16 L108 30 L92 44"/></svg></div>
+        <div class="step a rise" style="--d:2.9s"><span class="num">03</span><div class="si"><svg class="ico"><use href="#i-trend"/></svg></div><h3>მართე და გაიზარდე</h3><p>აკონტროლე შედეგები ერთი ეკრანიდან</p></div>
+      </div>
+    </section>
+
+    <!-- 5. დემო -->
+    <section class="slide s-demo" data-tr="zoom" data-title="დემო" aria-label="საიტის დემო">
+      <div class="copy">
+        <div class="eyebrow a left" style="--d:.2s">დემო</div>
+        <h2 class="h2 a left" style="--d:.4s">ნახე მართეო <span class="grad">მოქმედებაში</span></h2>
+        <div class="feature a left" style="--d:1s"><span class="ck"><svg class="ico"><use href="#i-check"/></svg></span>მკაფიო მთავარი პანელი</div>
+        <div class="feature a left" style="--d:1.25s"><span class="ck"><svg class="ico"><use href="#i-check"/></svg></span>მუშაობს კომპიუტერზე</div>
+        <div class="feature a left" style="--d:1.5s"><span class="ck"><svg class="ico"><use href="#i-check"/></svg></span>და ტელეფონზეც</div>
+      </div>
+      <div class="laptop a rise" style="--d:.5s">
+        <div class="lid"><div class="cam"></div>
+          <div class="screen"><div class="scroller" id="scrLaptop" style="--sd:1.6s">
+            <div class="mk">
+              <div class="side">
+                <div class="lg"><span data-logo></span>MARTEO</div>
+                <div class="it on">მთავარი</div><div class="it">გაყიდვები</div><div class="it">მარაგი</div><div class="it">კლიენტები</div><div class="it">ანგარიშები</div><div class="it">პარამეტრები</div>
+              </div>
+              <div class="main">
+                <div class="tb"><h4>გამარჯობა 👋</h4><div class="av"></div></div>
+                <div class="kpis">
+                  <div class="card kpi"><small>შემოსავალი</small><b>₾ 48 250</b><i>▲ 12%</i></div>
+                  <div class="card kpi"><small>შეკვეთები</small><b>1 284</b><i>▲ 8%</i></div>
+                  <div class="card kpi"><small>ახალი კლიენტები</small><b>312</b><i>▲ 15%</i></div>
+                </div>
+                <div class="card chart"><span class="ttl">გაყიდვები თვეების მიხედვით</span>
+                  <div class="bars"><span style="height:40%"></span><span style="height:55%"></span><span style="height:48%"></span><span style="height:62%"></span><span style="height:58%"></span><span style="height:70%"></span><span style="height:66%"></span><span style="height:78%"></span><span style="height:74%"></span><span style="height:86%"></span><span style="height:82%"></span><span style="height:95%"></span></div>
+                </div>
+                <div class="row2">
+                  <div class="card"><span class="ttl">კატეგორიები</span><div class="donut"></div></div>
+                  <div class="card"><span class="ttl">ბოლო შეკვეთები</span>
+                    <div class="tr th"><span>კლიენტი</span><span>თანხა</span><span>სტატუსი</span></div>
+                    <div class="tr"><span>ნინო ბ.</span><span>₾ 240</span><span><em class="pill">გადახდილი</em></span></div>
+                    <div class="tr"><span>გიორგი მ.</span><span>₾ 85</span><span><em class="pill w">მუშავდება</em></span></div>
+                    <div class="tr"><span>ანა ქ.</span><span>₾ 410</span><span><em class="pill">გადახდილი</em></span></div>
+                  </div>
+                </div>
+                <div class="card"><span class="ttl">მარაგი</span>
+                  <div class="tr th"><span>პროდუქტი</span><span>რაოდენობა</span><span>სტატუსი</span></div>
+                  <div class="tr"><span>პროდუქტი A</span><span>124</span><span><em class="pill">საკმარისი</em></span></div>
+                  <div class="tr"><span>პროდუქტი B</span><span>18</span><span><em class="pill w">მცირეა</em></span></div>
+                  <div class="tr"><span>პროდუქტი C</span><span>260</span><span><em class="pill">საკმარისი</em></span></div>
+                  <div class="tr"><span>პროდუქტი D</span><span>9</span><span><em class="pill w">მცირეა</em></span></div>
+                  <div class="tr"><span>პროდუქტი E</span><span>77</span><span><em class="pill">საკმარისი</em></span></div>
+                </div>
+              </div>
+            </div>
+          </div></div>
+        </div>
+        <div class="base"></div>
+      </div>
+      <div class="phone a right" style="--d:1.1s">
+        <div class="notch"></div>
+        <div class="screen"><div class="scroller" id="scrPhone" style="--sd:2s;--sdur:3.8s">
+          <div class="mm">
+            <div class="hd"><b>მთავარი</b><span data-logo></span></div>
+            <div class="big"><small>დღევანდელი შემოსავალი</small><b>₾ 1 860</b><small>▲ 9% გუშინდელთან</small>
+              <div class="sp"><span style="height:30%"></span><span style="height:50%"></span><span style="height:40%"></span><span style="height:70%"></span><span style="height:60%"></span><span style="height:90%"></span><span style="height:80%"></span></div></div>
+            <div class="g2"><div class="c">შეკვეთები<b>46</b></div><div class="c">კლიენტები<b>18</b></div></div>
+            <div class="g2"><div class="c">მარაგი<b>1 240</b></div><div class="c">დავალებები<b>5</b></div></div>
+            <div class="li"><span>ნინო ბ.</span><i>₾ 240</i></div>
+            <div class="li"><span>გიორგი მ.</span><i>₾ 85</i></div>
+            <div class="li"><span>ანა ქ.</span><i>₾ 410</i></div>
+            <div class="li"><span>ლუკა დ.</span><i>₾ 132</i></div>
+            <div class="li"><span>მარიამ ს.</span><i>₾ 64</i></div>
+            <div class="li"><span>დავით ჯ.</span><i>₾ 299</i></div>
+            <div class="li"><span>თამარ ხ.</span><i>₾ 178</i></div>
+            <div class="li"><span>ირაკლი ფ.</span><i>₾ 520</i></div>
+            <div class="li"><span>სალომე გ.</span><i>₾ 91</i></div>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- 6. ვისთვისაა -->
+    <section class="slide s-who" data-tr="slide" data-title="ვისთვისაა" aria-label="ვისთვისაა">
+      <div class="eyebrow a" style="--d:.2s">ვისთვისაა</div>
+      <h2 class="h2 a" style="--d:.4s">ვისთვის შეიქმნა <span class="grad">მართეო?</span></h2>
+      <div class="cards">
+        <div class="who a rise" style="--d:.9s"><div class="wi"><svg class="ico"><use href="#i-store"/></svg></div><h3>მცირე და საშუალო ბიზნესი</h3><p>მთელი ბიზნესის კონტროლი ერთ ადგილას — ზედმეტი სირთულის გარეშე.</p></div>
+        <div class="who a rise" style="--d:1.3s"><div class="wi"><svg class="ico"><use href="#i-bag"/></svg></div><h3>ონლაინ გამყიდველები</h3><p>შეკვეთები და მარაგი ყოველთვის წესრიგშია.</p></div>
+        <div class="who a rise" style="--d:1.7s"><div class="wi"><svg class="ico"><use href="#i-briefcase"/></svg></div><h3>მენეჯერები და მფლობელები</h3><p>ზუსტი ანგარიშები სწრაფი და გააზრებული გადაწყვეტილებებისთვის.</p></div>
+      </div>
+    </section>
+
+    <!-- 7. რიცხვები (ივსება config.js-დან; ცარიელი სიის შემთხვევაში სლაიდი ამოიღება) -->
+    <section class="slide s-stats" data-tr="zoom" data-title="რიცხვები" aria-label="რიცხვები" id="statsSlide">
+      <div class="eyebrow a" style="--d:.2s">რიცხვებში</div>
+      <h2 class="h2 a" style="--d:.4s">მართეო <span class="grad">რიცხვებში</span></h2>
+      <div class="stats" id="stats"></div>
+    </section>
+
+    <!-- 8. მხარდაჭერა და კონტაქტი -->
+    <section class="slide s-contact" data-tr="slide" data-title="კონტაქტი" aria-label="მხარდაჭერა და კონტაქტი">
+      <div class="eyebrow a" style="--d:.2s">მხარდაჭერა</div>
+      <h2 class="h2 a" style="--d:.4s">გაქვს კითხვა? <span class="grad">დაგვიკავშირდი</span></h2>
+      <p class="lead a" style="--d:.8s">ჩვენი გუნდი სიამოვნებით დაგეხმარება.</p>
+      <div class="contacts" id="contacts"></div>
+    </section>
+
+    <!-- 9. დასასრული -->
+    <section class="slide s-end" data-tr="zoom" data-title="დაიწყე დღესვე" aria-label="დასასრული">
+      <div>
+        <div class="eyebrow a left" style="--d:.2s">დაიწყე ახლავე</div>
+        <h1 class="h1 a blur" style="--d:.4s">სცადე მართეო<br><span class="grad">დღესვე</span></h1>
+        <a class="urlpill a pop" style="--d:1.2s" id="urlPill" href="#" target="_blank" rel="noopener"><svg class="ico"><use href="#i-globe"/></svg><span id="urlText"></span></a>
+      </div>
+      <div class="qrcard a zoom" style="--d:1.1s">
+        <div class="qr" id="qr"></div>
+        <p>დაასკანერე და გადადი საიტზე</p>
+      </div>
+      <div class="endlogo">
+        <div class="logo-anim" style="--ld:3s"><span data-logo></span></div>
+        <img class="a blur" style="--d:4.4s" src="assets/wordmark-white.png" alt="MARTEO">
+      </div>
+    </section>
+  </div>
+
+  <div class="flash" id="flash"><svg class="ico fillico" style="fill:#fff;stroke:none"><use id="flashUse" href="#i-pause"/></svg></div>
+
+  <div class="ui" id="ui">
+    <div class="segs" id="segs"></div>
+    <div class="bar">
+      <button class="btn" id="bPrev" aria-label="წინა სლაიდი (←)" title="წინა (←)"><svg class="ico"><use href="#i-prev"/></svg></button>
+      <button class="btn" id="bPlay" aria-label="პაუზა (Space)" title="პაუზა / გაგრძელება (Space)"><svg class="ico fillico"><use id="playUse" href="#i-pause"/></svg></button>
+      <button class="btn" id="bNext" aria-label="შემდეგი სლაიდი (→)" title="შემდეგი (→)"><svg class="ico"><use href="#i-next"/></svg></button>
+      <span class="count" id="count">1 / 9</span>
+      <span class="title" id="title"></span>
+      <span class="spacer"></span>
+      <button class="btn" id="bFs" aria-label="სრული ეკრანი (F)" title="სრული ეკრანი (F)"><svg class="ico"><use id="fsUse" href="#i-expand"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="assets/vendor/qrcode.js"></script>
+<script>
+(function(){
+  'use strict';
+  var CFG = Object.assign({
+    siteUrl:'https://marteo.ge', slideDuration:6000, autoplay:true,
+    screenshots:{laptop:'',phone:''}, contacts:[], stats:[]
+  }, window.MARTEO_CONFIG || {});
+  var params = new URLSearchParams(location.search);
+  if (params.get('autoplay') === '0') CFG.autoplay = false;
+
+  var $ = function(s, r){ return (r||document).querySelector(s); };
+  var $$ = function(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+  var esc = function(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
+
+  /* ---------- Logo (inline SVG, animatable) ---------- */
+  var LOGO = '<svg class="logo-svg" viewBox="328 349 1275 1233" aria-hidden="true">' +
+    '<rect class="lg-box" x="328" y="349" width="1275" height="1233" rx="130"/>' +
+    '<path class="lg-m" pathLength="1" d="M534 580H657L965 840L1272 580H1397Q1410 580 1410 593V738H1280L1022 970H908L672 752Q660 744 651 760L649 1338Q649 1351 636 1351H534Q521 1351 521 1338V593Q521 580 534 580Z"/>' +
+    '<rect class="lg-bar lg-b1" x="904" y="1131" width="123" height="220" rx="13"/>' +
+    '<rect class="lg-bar lg-b2" x="1092" y="980" width="123" height="371" rx="13"/>' +
+    '<rect class="lg-bar lg-b3" x="1281" y="815" width="129" height="536" rx="13"/>' +
+    '</svg>';
+  $$('[data-logo]').forEach(function(el){ el.outerHTML = LOGO; });
+
+  /* ---------- Content from config ---------- */
+  var url = CFG.siteUrl;
+  var prettyUrl = url.replace(/^https?:\/\//,'').replace(/\/$/,'');
+  $('#urlText').textContent = prettyUrl;
+  $('#urlPill').href = url;
+
+  // QR code (error correction H so the logo in the middle stays scannable)
+  (function(){
+    var box = $('#qr');
+    try {
+      var q = qrcode(0, 'H'); q.addData(url); q.make();
+      var n = q.getModuleCount(), d = '';
+      for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (q.isDark(r, c)) d += 'M' + c + ' ' + r + 'h1v1h-1z';
+      box.innerHTML = '<svg viewBox="0 0 ' + n + ' ' + n + '" shape-rendering="crispEdges" role="img" aria-label="QR: ' + esc(prettyUrl) + '"><path fill="#0D1828" d="' + d + '"/></svg>' +
+        '<div class="qlogo">' + LOGO + '</div>';
+    } catch (e) { box.textContent = prettyUrl; }
+  })();
+
+  // Contacts
+  $('#contacts').innerHTML = (CFG.contacts || []).map(function(c, i){
+    var tag = c.href ? 'a' : 'div';
+    var attrs = c.href ? ' href="' + esc(c.href) + '" target="_blank" rel="noopener"' : '';
+    return '<' + tag + ' class="contact a pop" style="--d:' + (1.1 + i * .3).toFixed(2) + 's"' + attrs + '>' +
+      '<span class="ci"><svg class="ico"><use href="#i-' + esc(c.icon || 'globe') + '"/></svg></span>' +
+      '<small>' + esc(c.label || '') + '</small><b dir="auto">' + esc(c.value || '') + '</b></' + tag + '>';
+  }).join('');
+
+  // Stats (slide removed when there are none)
+  if (!CFG.stats || !CFG.stats.length) {
+    $('#statsSlide').remove();
+  } else {
+    $('#stats').innerHTML = CFG.stats.slice(0, 4).map(function(s, i){
+      var d = 0.9 + i * .35;
+      return '<div class="stat a up" style="--d:' + d.toFixed(2) + 's"><div class="n grad" data-count="' + Number(s.value) +
+        '" data-start="' + Math.round(d * 1000) + '" data-prefix="' + esc(s.prefix || '') + '" data-suffix="' + esc(s.suffix || '') + '">0</div>' +
+        '<div class="l">' + esc(s.label || '') + '</div></div>';
+    }).join('');
+  }
+
+  // Real screenshots (optional) replace the built-in mockups
+  function useShot(id, src){
+    if (!src) return;
+    var el = document.getElementById(id);
+    el.innerHTML = '<img alt="მართეოს ეკრანი" src="' + esc(src) + '">';
+    var img = el.querySelector('img');
+    img.addEventListener('load', measureScroll);
+  }
+  useShot('scrLaptop', CFG.screenshots && CFG.screenshots.laptop);
+  useShot('scrPhone', CFG.screenshots && CFG.screenshots.phone);
+  function measureScroll(){
+    ['scrLaptop','scrPhone'].forEach(function(id){
+      var el = document.getElementById(id);
+      var dist = Math.max(0, el.offsetHeight - el.parentNode.offsetHeight);
+      el.style.setProperty('--dist', dist + 'px');
+    });
+  }
+
+  /* ---------- Player ---------- */
+  var player = $('#player'), stage = $('#stage');
+  var slides = $$('.slide', stage);
+  var N = slides.length;
+  var idx = 0, t = 0, playing = !!CFG.autoplay, last = 0;
+
+  slides.forEach(function(s){
+    s._types = $$('[data-type]', s).map(function(el){
+      return { el: el, chars: Array.from(el.getAttribute('data-type')), start: +el.getAttribute('data-start') || 0, speed: +el.getAttribute('data-speed') || 60, n: -1 };
+    });
+    s._counts = $$('[data-count]', s).map(function(el){
+      return { el: el, to: +el.getAttribute('data-count'), start: +el.getAttribute('data-start') || 0, dur: 1800,
+        pre: el.getAttribute('data-prefix') || '', suf: el.getAttribute('data-suffix') || '', last: null };
+    });
+    s._dur = +s.getAttribute('data-duration') || CFG.slideDuration;
+  });
+
+  // Segmented progress bar
+  var segs = $('#segs');
+  segs.innerHTML = slides.map(function(s, i){ return '<div class="seg" data-i="' + i + '" title="' + esc(s.getAttribute('data-title')) + '"><i></i></div>'; }).join('');
+  var segEls = $$('.seg', segs);
+  segs.addEventListener('click', function(e){ var s = e.target.closest('.seg'); if (s) { go(+s.getAttribute('data-i')); poke(); } });
+
+  function fmt(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+
+  function renderHooks(s, time){
+    s._types.forEach(function(o){
+      var n = Math.max(0, Math.min(o.chars.length, Math.floor((time - o.start) / o.speed)));
+      if (n !== o.n) { o.n = n; o.el.textContent = o.chars.slice(0, n).join(''); }
+    });
+    s._counts.forEach(function(o){
+      var p = Math.max(0, Math.min(1, (time - o.start) / o.dur));
+      var e = 1 - Math.pow(1 - p, 3);
+      var v = Math.round(o.to * e);
+      if (v !== o.last) { o.last = v; o.el.textContent = o.pre + fmt(v) + o.suf; }
+    });
+  }
+
+  function updateUI(){
+    segEls.forEach(function(el, i){
+      el.classList.toggle('done', i < idx);
+      el.firstChild.style.width = i === idx ? Math.min(100, t / slides[idx]._dur * 100) + '%' : '';
+    });
+  }
+
+  function setChrome(){
+    var s = slides[idx];
+    var off = s.classList.contains('s-intro') || s.classList.contains('s-end');
+    stage.classList.toggle('no-chrome', off);
+    $('#chNum').textContent = String(idx + 1).padStart(2, '0');
+    $('#chName').textContent = s.getAttribute('data-title');
+    $('#count').textContent = (idx + 1) + ' / ' + N;
+    $('#title').textContent = s.getAttribute('data-title');
+  }
+
+  var leaveTimers = new WeakMap();
+  function go(i, dir){
+    i = (i + N) % N;
+    var from = slides[idx], to = slides[i];
+    if (dir == null) dir = i >= idx ? 1 : -1;
+    stage.classList.toggle('back', dir < 0);
+    if (from !== to) {
+      from.classList.remove('active', 'frozen');
+      from.classList.add('leaving');
+      clearTimeout(leaveTimers.get(from));
+      leaveTimers.set(from, setTimeout(function(){ from.classList.remove('leaving'); }, 950));
+    } else {
+      to.classList.remove('active');
+    }
+    clearTimeout(leaveTimers.get(to));
+    to.classList.remove('leaving', 'frozen');
+    void to.offsetWidth; // restart CSS animations
+    idx = i; t = 0;
+    to._types.forEach(function(o){ o.n = -1; });
+    to._counts.forEach(function(o){ o.last = null; });
+    renderHooks(to, 0);
+    to.classList.add('active');
+    setChrome(); updateUI();
+  }
+
+  function frame(now){
+    var dt = last ? Math.min(100, now - last) : 0; last = now;
+    var s = slides[idx];
+    if (!s.classList.contains('frozen')) {
+      t += dt;
+      renderHooks(s, t);
+      if (playing && t >= s._dur) { go(idx + 1, 1); }
+    }
+    updateUI();
+    requestAnimationFrame(frame);
+  }
+
+  function setPlaying(p, flash, keepRunning){
+    playing = p;
+    player.classList.toggle('paused', !p);
+    slides[idx].classList.toggle('frozen', !p && !keepRunning);
+    $('#playUse').setAttribute('href', p ? '#i-pause' : '#i-play');
+    $('#bPlay').setAttribute('aria-label', p ? 'პაუზა (Space)' : 'გაგრძელება (Space)');
+    if (flash) {
+      $('#flashUse').setAttribute('href', p ? '#i-play' : '#i-pause');
+      var f = $('#flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
+    }
+    if (p && t >= slides[idx]._dur) go(idx + 1, 1);
+    poke();
+  }
+  function toggle(){ setPlaying(!playing, true); }
+
+  /* Fullscreen */
+  function isFs(){ return !!(document.fullscreenElement || document.webkitFullscreenElement) || player.classList.contains('pseudo-fs'); }
+  function toggleFs(){
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } else if (player.requestFullscreen || player.webkitRequestFullscreen) {
+      var r = (player.requestFullscreen || player.webkitRequestFullscreen).call(player);
+      if (r && r.catch) r.catch(function(){ player.classList.toggle('pseudo-fs'); fsIcon(); });
+    } else {
+      player.classList.toggle('pseudo-fs');
+    }
+    fsIcon();
+  }
+  function fsIcon(){ setTimeout(function(){ $('#fsUse').setAttribute('href', isFs() ? '#i-shrink' : '#i-expand'); fit(); }, 60); }
+  document.addEventListener('fullscreenchange', fsIcon);
+  document.addEventListener('webkitfullscreenchange', fsIcon);
+
+  /* Fit 1920x1080 stage into the player */
+  function fit(){
+    var W = player.clientWidth, H = player.clientHeight;
+    var k = Math.min(W / 1920, H / 1080);
+    stage.style.transform = 'translate(' + ((W - 1920 * k) / 2) + 'px,' + ((H - 1080 * k) / 2) + 'px) scale(' + k + ')';
+  }
+  window.addEventListener('resize', fit);
+
+  /* Controls auto-hide */
+  var idleTimer;
+  function poke(){
+    player.classList.remove('idle', 'hide-cursor');
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(function(){ if (playing) player.classList.add('idle', 'hide-cursor'); }, 2600);
+  }
+  player.addEventListener('mousemove', poke);
+
+  $('#bPrev').addEventListener('click', function(){ go(idx - 1, -1); poke(); });
+  $('#bNext').addEventListener('click', function(){ go(idx + 1, 1); poke(); });
+  $('#bPlay').addEventListener('click', toggle);
+  $('#bFs').addEventListener('click', function(){ toggleFs(); poke(); });
+
+  // Click / tap on the picture toggles play-pause (like a video); swipe changes slides
+  var touchX = null, touchY = null, swiped = false;
+  stage.addEventListener('touchstart', function(e){ touchX = e.touches[0].clientX; touchY = e.touches[0].clientY; swiped = false; }, {passive:true});
+  stage.addEventListener('touchend', function(e){
+    if (touchX == null) return;
+    var dx = e.changedTouches[0].clientX - touchX, dy = e.changedTouches[0].clientY - touchY;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { swiped = true; go(idx + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); poke(); }
+    touchX = null;
+  });
+  stage.addEventListener('click', function(e){
+    if (swiped) { swiped = false; return; }
+    if (e.target.closest('a')) return;
+    if (player.classList.contains('idle')) { poke(); }
+    toggle();
+  });
+  stage.addEventListener('dblclick', function(e){ e.preventDefault(); toggleFs(); });
+
+  document.addEventListener('keydown', function(e){
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    switch (e.key) {
+      case ' ': case 'Spacebar': case 'k': case 'K':
+        e.preventDefault(); toggle(); break;
+      case 'ArrowRight': case 'PageDown':
+        e.preventDefault(); go(idx + 1, 1); poke(); break;
+      case 'ArrowLeft': case 'PageUp':
+        e.preventDefault(); go(idx - 1, -1); poke(); break;
+      case 'Home': e.preventDefault(); go(0, -1); poke(); break;
+      case 'End': e.preventDefault(); go(N - 1, 1); poke(); break;
+      case 'f': case 'F': e.preventDefault(); toggleFs(); break;
+      case 'Escape': if (player.classList.contains('pseudo-fs')) { player.classList.remove('pseudo-fs'); fsIcon(); } break;
+    }
+  });
+  // Buttons should not steal Space from the global handler
+  $$('.btn').forEach(function(b){ b.addEventListener('keydown', function(e){ if (e.key === ' ') e.stopPropagation(); }); });
+
+  /* Start once fonts are ready so Georgian text renders correctly from the first frame */
+  function start(){
+    if (start.done) return; start.done = true;
+    fit(); measureScroll();
+    slides[0].classList.add('active');
+    renderHooks(slides[0], 0);
+    setChrome();
+    player.classList.add('ready');
+    setPlaying(playing, false, true); // autoplay=0: intro animates once, then waits
+    requestAnimationFrame(frame);
+    player.focus({preventScroll:true});
+  }
+  fit();
+  if (document.fonts && document.fonts.ready) {
+    Promise.race([document.fonts.ready, new Promise(function(r){ setTimeout(r, 2500); })]).then(start);
+  } else { start(); }
+
+  // Expose a tiny API for embedding pages
+  window.MarteoPresentation = { play: function(){ setPlaying(true); }, pause: function(){ setPlaying(false); }, go: function(i){ go(i); } };
+})();
+</script>
+</body>
+</html>
