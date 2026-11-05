@@ -3,8 +3,8 @@
 ყველა ხმა აქვე სინთეზირდება, გარე ფაილები და ლიცენზიები არ სჭირდება.
 
   python3 tools/logo-sfx.py video/raw-sfx.wav
-  # ხმის დონე -16 LUFS-მდე (ტელეფონი / სოციალური ქსელები):
-  ffmpeg -i video/raw-sfx.wav -af "acompressor=threshold=-26dB:ratio=3:attack=4:release=150:makeup=4,alimiter=limit=0.85:level=false,loudnorm=I=-16:TP=-1.5:LRA=11" -ar 48000 video/marteo-logo-sfx.wav
+  # ხმის დონე -18 LUFS-მდე (ტელეფონი / სოციალური ქსელები):
+  ffmpeg -i video/raw-sfx.wav -af "acompressor=threshold=-24dB:ratio=2:attack=10:release=200:makeup=2,loudnorm=I=-18:TP=-2:LRA=11" -ar 48000 video/marteo-logo-sfx.wav
   ffmpeg -i video/marteo-logo.mp4 -i video/marteo-logo-sfx.wav -c:v copy -c:a aac -b:a 192k -shortest video/marteo-logo-sound.mp4
 
 დროები ემთხვევა index.html-ის ლოგოს ანიმაციას (--ld:.2s, პირველი სლაიდი).
@@ -79,68 +79,69 @@ def whoosh(d, f0, f1, peak=0.75, q=1.4, pan_from=-0.6, pan_to=0.4):
     return x * np.cos(th), x * np.sin(th)
 
 
-def impact(f0=95, f1=42, d=0.6):
+def airy(d, f0, f1, q=0.7, lp=3000, shape=1.0, pan_from=-0.3, pan_to=0.3):
+    """Soft breathy swoosh: wide band-pass noise, low-passed, smooth bell-shaped envelope."""
     t = t_axis(d)
-    freq = f1 + (f0 - f1) * np.exp(-t / 0.05)
-    body = np.sin(2 * np.pi * np.cumsum(freq) / SR) * np.exp(-t / 0.16)
-    click = onepole_lp(rng.standard_normal(len(t)), 2500) * np.exp(-t / 0.012) * 3
-    x = body + click
+    x = svf_bandpass(rng.standard_normal(len(t)), f0, f1, q)
+    x = onepole_lp(x, lp)
+    env = np.sin(np.pi * (t / d) ** shape) ** 2
+    x = x * env
+    x /= np.max(np.abs(x)) + 1e-9
+    th = (np.linspace(pan_from, pan_to, len(t)) + 1) * np.pi / 4
+    return x * np.cos(th), x * np.sin(th)
+
+
+def pillow(f=68, d=0.6):
+    """Very soft low landing: sine with slow attack, a little breath, no click."""
+    t = t_axis(d)
+    body = np.sin(2 * np.pi * f * t) * np.minimum(1, t / 0.018) * np.exp(-t / 0.18)
+    breath = onepole_lp(rng.standard_normal(len(t)), 260) * np.minimum(1, t / 0.02) * np.exp(-t / 0.08)
+    x = body + 0.6 * breath / (np.max(np.abs(breath)) + 1e-9)
     return x / (np.max(np.abs(x)) + 1e-9)
 
 
-def blip(f, d=0.35):
+def note(f, d=0.9):
+    """Gentle glassy tone (soft attack, round decay)."""
     t = t_axis(d)
-    pitch = f * (1 + 0.06 * np.exp(-t / 0.01))
-    ph = 2 * np.pi * np.cumsum(pitch) / SR
-    x = (np.sin(ph) + 0.25 * np.sin(2 * ph) + 0.08 * np.sin(3 * ph)) * np.exp(-t / 0.07)
-    x *= np.minimum(1, t / 0.002)
+    ph = 2 * np.pi * f * t
+    x = (np.sin(ph) + 0.12 * np.sin(2 * ph)) * np.minimum(1, t / 0.008) * np.exp(-t / 0.28)
     return x / (np.max(np.abs(x)) + 1e-9)
 
 
-def riser(d, f0, f1):
-    t = t_axis(d)
-    freq = f0 * (f1 / f0) ** (t / d)
-    x = np.sin(2 * np.pi * np.cumsum(freq) / SR) * np.sin(np.pi * t / d) ** 2
-    return x
-
-
-def shimmer(d=1.8):
+def glow(d=2.0):
+    """Soft sparkle: a few high partials fading in and out slowly."""
     t = t_axis(d)
     x = np.zeros(len(t))
-    for k, (f, a) in enumerate([(2093, 1.0), (2637, .7), (3136, .55), (4186, .35), (5274, .2)]):
-        delay = k * 0.035
-        tt = np.clip(t - delay, 0, None)
-        x += a * np.sin(2 * np.pi * f * tt) * np.exp(-tt / 0.45) * (t >= delay) * (1 + 0.15 * np.sin(2 * np.pi * 6 * tt))
-    x *= np.minimum(1, t / 0.004)
+    for k, (f, a) in enumerate([(1046.5, 1.0), (1568, .6), (2093, .4), (2637, .22)]):
+        tt = np.clip(t - k * 0.06, 0, None)
+        x += a * np.sin(2 * np.pi * f * tt) * np.minimum(1, tt / 0.04) * np.exp(-tt / 0.6) * (tt > 0)
     return x / (np.max(np.abs(x)) + 1e-9)
 
 
-# 1) tile flies in: whoosh -> soft impact on the overshoot (~0.88s)
-wl, wr = whoosh(0.85, 180, 2400, peak=0.85, q=1.6, pan_from=-0.5, pan_to=0.1)
-place_stereo(wl, wr, 0.05, 0.8)
-place(impact(), 0.86, 1.0)
+# 1) tile drifts in: soft swoosh -> pillowy landing (~0.88s)
+wl, wr = airy(0.9, 200, 1500, q=0.7, lp=2200, shape=0.8, pan_from=-0.4, pan_to=0.0)
+place_stereo(wl, wr, 0.0, 0.7)
+place(pillow(), 0.84, 0.6)
 
-# 2) the "M" draws itself: airy pen stroke + quiet riser, small pop when it fills
-sl, sr_ = whoosh(0.9, 2500, 6000, peak=0.6, q=2.5, pan_from=-0.3, pan_to=0.3)
-place_stereo(sl, sr_, 0.65, 0.16)
-place(riser(0.9, 300, 760), 0.65, 0.08)
-place(blip(520, 0.25), 1.55, 0.1)
+# 2) the "M" draws itself: faint breath of air
+sl, sr_ = airy(0.95, 1200, 3500, q=0.8, lp=4000, pan_from=-0.25, pan_to=0.25)
+place_stereo(sl, sr_, 0.62, 0.18)
 
-# 3) three bars grow: rising UI ticks
-for at, f, pan in [(1.45, 880, -0.25), (1.6, 1175, 0.0), (1.75, 1568, 0.25)]:
-    place(blip(f), at, 0.14, pan)
+# 3) three bars grow: soft rising notes (C - E - G)
+for at, f, pan in [(1.45, 523.25, -0.2), (1.6, 659.25, 0.0), (1.75, 783.99, 0.2)]:
+    place(note(f), at, 0.2, pan)
 
-# 4) wordmark appears: reverse swoosh + shimmer
-rl, rr = whoosh(0.8, 600, 7000, peak=0.92, q=1.1, pan_from=0.4, pan_to=-0.1)
-place_stereo(rl, rr, 1.6, 0.5)
-sh = shimmer()
-place(sh, 2.38, 0.16, -0.2)
-place(sh, 2.40, 0.16, 0.2)
+# 4) wordmark appears: airy swell + gentle sparkle
+rl, rr = airy(0.9, 500, 3000, q=0.7, lp=3500, shape=1.4, pan_from=0.3, pan_to=-0.1)
+place_stereo(rl, rr, 1.55, 0.4)
+g1 = glow()
+place(g1, 2.3, 0.14, -0.25)
+place(g1, 2.34, 0.14, 0.25)
 
 # light room reverb (exponential noise tail)
-ir_t = t_axis(1.1)
+ir_t = t_axis(1.6)
 def make_ir():
-    h = onepole_lp(rng.standard_normal(len(ir_t)) * np.exp(-ir_t / 0.25), 5000)
+    h = onepole_lp(rng.standard_normal(len(ir_t)) * np.exp(-ir_t / 0.38), 3500)
     return h / np.sqrt(np.sum(h ** 2))
 
 
@@ -153,8 +154,8 @@ def conv(x, h):
     return np.fft.irfft(np.fft.rfft(x, m) * np.fft.rfft(h, m), m)[:len(x)]
 
 
-L2 = L + 0.22 * conv(L, ir_l)
-R2 = R + 0.22 * conv(R, ir_r)
+L2 = L + 0.32 * conv(L, ir_l)
+R2 = R + 0.32 * conv(R, ir_r)
 
 # match the video fade-out (4.3s -> 5.0s) and normalise to -1 dBFS
 fade = np.ones(N)
