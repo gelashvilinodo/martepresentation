@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>მართეო — პრეზენტაცია</title>
-<meta name="description" content="მართეო — ბიზნესის მართვის მარტივი პლატფორმა. ანიმაციური პრეზენტაცია.">
+<title>მართეო - პრეზენტაცია</title>
+<meta name="description" content="მართეო - ბიზნესის მართვის მარტივი პლატფორმა. ანიმაციური პრეზენტაცია.">
 <link rel="icon" type="image/png" href="assets/marteo-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -218,57 +218,138 @@ svg{display:block}
 .laptop .cam{width:8px;height:8px;border-radius:50%;background:#2A3A52;margin:-8px auto 6px}
 .laptop .base{height:30px;width:1220px;margin-left:-80px;background:linear-gradient(#3A4B63,#1D2A3D);border-radius:0 0 30px 30px;position:relative}
 .laptop .base::before{content:"";position:absolute;left:50%;top:0;width:180px;height:12px;transform:translateX(-50%);background:#12202F;border-radius:0 0 12px 12px}
-.screen{position:relative;overflow:hidden;background:#F3F6FA}
+.screen{position:relative;overflow:hidden;background:#09111F}
 .laptop .screen{height:620px;border-radius:6px}
 .phone{position:absolute;left:1600px;top:440px;width:290px;height:600px;border-radius:50px;background:#0A0F18;padding:12px;border:2px solid #2A3A52;box-shadow:0 40px 90px rgba(0,0,0,.6)}
 .phone .screen{height:100%;border-radius:38px}
 .phone .notch{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:90px;height:24px;border-radius:14px;background:#0A0F18;z-index:3}
 .scroller{position:absolute;left:0;top:0;width:100%}
 .scroller img{display:block;width:100%;height:auto}
+.ap .scroller,.apm .scroller{position:absolute;left:0;top:0;width:100%}
 .slide.active .scroller{animation:scroll-y var(--sdur,4.4s) var(--ease-in-out) var(--sd,1.6s) both}
 @keyframes scroll-y{from{transform:translateY(0)}to{transform:translateY(calc(-1 * var(--dist,0px)))}}
-/* mock dashboard (desktop) */
-.mk{display:grid;grid-template-columns:190px 1fr;min-height:1260px;color:var(--navy);font-size:14px}
-.mk .side{background:var(--navy);color:#fff;padding:22px 16px}
-.mk .side .lg{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;margin-bottom:28px;letter-spacing:.12em}
-.mk .side .lg .logo-svg{width:30px;height:30px}
-.mk .side .it{padding:10px 12px;border-radius:10px;color:rgba(255,255,255,.65);margin-bottom:4px;font-weight:500}
-.mk .side .it.on{background:rgba(105,169,220,.18);color:#fff}
-.mk .main{padding:22px 26px}
-.mk .tb{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.mk .tb h4{font-size:22px;font-weight:800}
-.mk .tb .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--blue))}
-.mk .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
-.mk .card{background:#fff;border-radius:14px;padding:16px 18px;box-shadow:0 1px 3px rgba(13,24,40,.06)}
-.mk .kpi small{color:#7A889C;font-weight:500}
-.mk .kpi b{display:block;font-size:24px;font-weight:800;margin:6px 0 4px}
-.mk .kpi i{font-style:normal;color:#2E9E6A;font-weight:700;font-size:13px}
-.mk .chart{height:250px;display:flex;flex-direction:column;margin-bottom:16px}
-.mk .chart .bars{flex:1;display:flex;align-items:flex-end;gap:12px;padding-top:14px}
-.mk .chart .bars span{flex:1;border-radius:6px 6px 2px 2px;background:linear-gradient(var(--sky),var(--blue))}
-.mk .chart .bars span:nth-child(3n){background:var(--navy)}
-.mk .row2{display:grid;grid-template-columns:1fr 1.4fr;gap:14px;margin-bottom:16px}
-.mk .donut{width:150px;height:150px;border-radius:50%;margin:16px auto;background:conic-gradient(var(--blue) 0 45%,var(--sky) 0 75%,var(--navy) 0 100%);display:grid;place-items:center}
-.mk .donut::after{content:"";width:86px;height:86px;border-radius:50%;background:#fff}
-.mk .tr{display:grid;grid-template-columns:1.6fr 1fr .8fr;padding:10px 0;border-bottom:1px solid #EDF1F6;align-items:center}
-.mk .tr.th{color:#7A889C;font-weight:600}
-.mk .pill{display:inline-block;padding:3px 10px;border-radius:20px;background:#E3F4EC;color:#2E9E6A;font-weight:700;font-size:12px}
-.mk .pill.w{background:#FFF3DC;color:#B7791F}
-.mk .ttl{font-weight:800;font-size:16px}
-/* mock mobile */
-.mm{padding:44px 16px 20px;min-height:1150px;color:var(--navy);font-size:13px}
-.mm .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.mm .hd b{font-size:18px;font-weight:800}
-.mm .hd .logo-svg{width:30px;height:30px}
-.mm .big{background:var(--navy);color:#fff;border-radius:18px;padding:18px;margin-bottom:12px}
-.mm .big small{opacity:.7}.mm .big b{display:block;font-size:26px;font-weight:800;margin:6px 0}
-.mm .big .sp{display:flex;align-items:flex-end;gap:6px;height:60px;margin-top:10px}
-.mm .big .sp span{flex:1;background:var(--sky);border-radius:3px}
-.mm .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.mm .c{background:#fff;border-radius:14px;padding:12px;box-shadow:0 1px 3px rgba(13,24,40,.06)}
-.mm .c b{display:block;font-size:18px;font-weight:800;margin-top:4px}
-.mm .li{display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:12px;padding:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(13,24,40,.06)}
-.mm .li i{font-style:normal;font-weight:700;color:var(--blue)}
+/* ---- Marteo app mockups (dark UI, matches the real dashboard) ---- */
+.ap,.apm{--a-bg:#09111F;--a-card:#0F1A2D;--a-line:#1D2B42;--a-mut:#8A97AD;--a-blue:#4C7BD9;--a-green:#22C55E;--a-yel:#F4B63F;--a-pur:#A78BFA;
+  position:absolute;inset:0;background:var(--a-bg);color:#fff;font-size:11px;line-height:1.35}
+.ap .ico,.apm .ico{width:1em;height:1em}
+.ap-side{position:absolute;left:0;top:0;bottom:0;width:190px;background:linear-gradient(180deg,#10295A,#0C1F45);display:flex;flex-direction:column;padding:18px 0 14px 12px;z-index:2}
+.ap-logo{display:flex;align-items:center;gap:6px;padding-left:12px;margin-bottom:34px}
+.ap-logo .logo-svg{width:18px;height:18px}
+.ap-logo img{height:9px}
+.ap-nav{display:flex;flex-direction:column;gap:3px}
+.ap-it{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px 0 0 10px;color:#DCE5F3;font-size:11px;font-weight:500}
+.ap-it .ico{font-size:13px;color:#8FA6CC}
+.ap-it.on{background:#0A1934;color:#6C9BFF}
+.ap-it.on .ico{color:#6C9BFF}
+.ap-bottom{margin-top:auto;padding-right:12px;border-top:1px solid rgba(255,255,255,.08);padding-top:10px;display:flex;flex-direction:column;gap:6px}
+.ap-bottom .ap-it{border-radius:10px}
+.ap-bottom .ap-it.box{background:#0A1934;border:1px solid rgba(255,255,255,.08)}
+.ap-top{position:absolute;left:190px;right:0;top:0;height:42px;background:#0E2350;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:flex-end;gap:14px;padding:0 16px;z-index:2}
+.ap-top .bell{font-size:13px;color:#C9D4E6}
+.ap-biz{display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:4px 10px 4px 4px}
+.ap-biz .bi{width:24px;height:24px;border-radius:7px;background:#1B3466;display:grid;place-items:center;font-size:12px;color:#C9D4E6}
+.ap-biz b{display:block;font-size:10px;font-weight:700}
+.ap-biz small{display:block;font-size:8.5px;color:var(--a-mut)}
+.ap-biz .ico.cd{font-size:10px;color:var(--a-mut)}
+.ap-main{position:absolute;left:190px;right:0;top:42px;bottom:0;overflow:hidden}
+.ap-c{padding:20px 22px 26px}
+.ap-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.ap-head h4{font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px}
+.ap-head h4 .ico{font-size:12px;color:var(--a-mut)}
+.ap-acts{display:flex;gap:8px}
+.ap-date{display:flex;align-items:center;gap:7px;border:1px solid var(--a-line);border-radius:9px;padding:7px 10px;font-size:10px;color:#DCE5F3}
+.ap-date .ico{color:var(--a-mut)}
+.ap-btn{display:flex;align-items:center;gap:6px;background:var(--a-green);border-radius:9px;padding:7px 14px;font-size:10px;font-weight:700}
+.ap-hi{display:flex;align-items:center;gap:10px;color:#BFCBDC;font-size:10px;margin-bottom:12px}
+.ap-hi .mo{width:24px;height:24px;border-radius:8px;background:#13213A;display:grid;place-items:center;color:#8FA6CC;font-size:12px}
+.ap-hi b{color:#fff}
+.ap-per{font-size:8.5px;color:var(--a-mut);margin-bottom:10px}
+.ap-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:11px}
+.ap-card{background:var(--a-card);border:1px solid var(--a-line);border-radius:12px}
+.ap-kpi{padding:13px 14px 15px}
+.ap-kpi .ti{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;font-size:13px;margin-bottom:12px}
+.ti.b{background:rgba(76,123,217,.16);color:#6C9BFF}.ti.g{background:rgba(34,197,94,.14);color:var(--a-green)}.ti.y{background:rgba(244,182,63,.14);color:var(--a-yel)}
+.ap-kpi small{display:block;color:#C3CEDF;font-size:9.5px;margin-bottom:8px}
+.ap-kpi b{font-size:16px;font-weight:800}
+.ap-row{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px}
+.ap-box{padding:14px}
+.ap-bh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ap-bh b{font-size:11.5px;font-weight:800;display:flex;align-items:center;gap:6px}
+.ap-bh b .ico{color:#6C9BFF}
+.ap-lg{display:flex;gap:10px;font-size:8.5px;color:#BFCBDC}
+.ap-lg i{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:1px}
+.ap-chart{position:relative;height:150px;margin:6px 0 8px 36px;border-bottom:1px solid var(--a-line)}
+.ap-chart .gl{position:absolute;left:0;right:0;border-top:1px dashed rgba(255,255,255,.07)}
+.ap-chart .gl span{position:absolute;left:-36px;top:-6px;font-size:7.5px;color:var(--a-mut)}
+.ap-chart .cols{position:absolute;inset:0;display:flex;justify-content:space-around;align-items:flex-end}
+.ap-chart .col{display:flex;gap:2px;align-items:flex-end;height:100%}
+.ap-chart .col i{width:9px;border-radius:2px 2px 0 0}
+.ap-chart .col i.s{background:var(--a-blue)}.ap-chart .col i.p{background:var(--a-green)}
+.ap-mx{display:flex;justify-content:space-around;margin-left:36px;font-size:7.5px;color:var(--a-mut);margin-bottom:10px}
+.ap-sum{border:1px solid var(--a-line);border-radius:9px;background:#0B1424;padding:8px 10px;display:grid;grid-template-columns:1fr 1fr;font-size:8.5px;color:#BFCBDC}
+.ap-sum .h{grid-column:1/-1;color:var(--a-mut);margin-bottom:4px}
+.ap-sum b{display:block;color:#fff;font-size:10px;margin-top:2px}
+.ap-donut-wrap{display:flex;align-items:center;gap:18px;margin-top:14px}
+.ap-donut{width:136px;height:136px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:conic-gradient(var(--a-yel) 0 74.5%,var(--a-blue) 0 85.1%,var(--a-green) 0 94.1%,var(--a-pur) 0 100%)}
+.ap-donut div{width:100px;height:100px;border-radius:50%;background:var(--a-card);display:grid;place-items:center;text-align:center;font-size:7.5px;color:var(--a-mut)}
+.ap-donut div b{display:block;color:#fff;font-size:11.5px;margin-top:2px}
+.ap-leg{display:flex;flex-direction:column;gap:8px;font-size:8.5px;color:#BFCBDC}
+.ap-leg i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
+.ap-leg b{display:block;color:#fff;font-size:9.5px;margin:2px 0 0 12px}
+.ap-note{font-size:7.5px;color:var(--a-mut);margin-top:16px}
+.ap-list .ap-bh{padding:14px 14px 10px;margin:0;border-bottom:1px solid var(--a-line)}
+.ap-bh a{color:#6C9BFF;font-size:8.5px;text-decoration:none;display:flex;align-items:center;gap:3px}
+.ap-li{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--a-line)}
+.ap-li:last-child{border-bottom:0}
+.ap-li .n{width:10px;color:var(--a-mut);font-size:8.5px}
+.th{width:30px;height:30px;border-radius:7px;background:#fff;display:grid;place-items:center;font-size:20px;flex:none}
+.th .ico{stroke-width:1.6}
+.ap-li .tx{flex:1;min-width:0}
+.ap-li .tx b{display:block;font-size:9.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ap-li .tx small{font-size:8px;color:var(--a-mut);display:flex;align-items:center;gap:6px;margin-top:3px}
+.ap-li .pr{font-size:9.5px;font-weight:700;white-space:nowrap}
+.st{display:inline-block;padding:1px 6px;border-radius:4px;font-size:7.5px;font-weight:600}
+.st.b{background:rgba(76,123,217,.18);color:#7FA6FF}.st.y{background:rgba(244,182,63,.15);color:var(--a-yel)}.st.g{background:rgba(34,197,94,.14);color:var(--a-green)}
+.ap-ai{position:absolute;right:14px;bottom:0;width:250px;background:#0E1C33;border:1px solid var(--a-line);border-bottom:0;border-radius:10px 10px 0 0;padding:8px 12px;display:flex;align-items:center;gap:8px;font-size:10px;font-weight:700;z-index:3}
+.ap-ai .logo-svg{width:16px;height:16px}
+.ap-ai .ico{margin-left:auto;color:var(--a-mut)}
+/* mobile */
+.apm-top{position:absolute;left:0;right:0;top:0;height:74px;padding:32px 12px 0;background:#0E2350;display:flex;align-items:center;justify-content:space-between;z-index:2;border-bottom:1px solid rgba(255,255,255,.06)}
+.apm-top .ico{font-size:15px;color:#C9D4E6}
+.apm-top .logo-svg{width:22px;height:22px}
+.apm-top .rt{display:flex;align-items:center;gap:8px}
+.apm-top .bz{display:flex;align-items:center;gap:3px;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:3px 5px}
+.apm-top .bz .ico{font-size:12px}
+.apm-top .bz .ico.cd{font-size:9px}
+.apm-main{position:absolute;left:0;right:0;top:74px;bottom:0;overflow:hidden}
+.apm-c{padding:12px 10px 20px}
+.apm h4{font-size:15px;font-weight:800;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.apm h4 .ico{font-size:11px;color:var(--a-mut)}
+.apm .ap-hi{font-size:9px;margin-bottom:9px}
+.apm .ap-btn{justify-content:center;padding:8px;margin-bottom:7px;font-size:9.5px}
+.apm .ap-date{justify-content:space-between;margin-bottom:7px;font-size:9px}
+.apm .ap-date span{display:flex;align-items:center;gap:6px}
+.apm .ap-per{font-size:7.5px;margin-bottom:8px}
+.apm .ap-kpis{grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px}
+.apm .ap-kpi{padding:9px 10px 11px}
+.apm .ap-kpi .ti{width:20px;height:20px;font-size:11px;margin-bottom:8px}
+.apm .ap-kpi small{font-size:8px;margin-bottom:5px}
+.apm .ap-kpi b{font-size:12.5px}
+.apm .ap-card{margin-bottom:8px}
+.apm .ap-box{padding:10px}
+.apm .ap-chart{height:110px;margin-left:30px}
+.apm .ap-chart .gl span{left:-30px}
+.apm .ap-mx{margin-left:30px}
+.apm .ap-chart .col i{width:7px}
+.apm .ap-donut{width:96px;height:96px}
+.apm .ap-donut div{width:70px;height:70px;font-size:6.5px}
+.apm .ap-donut div b{font-size:9px}
+.apm .ap-donut-wrap{gap:10px;margin-top:8px}
+.apm .ap-leg{gap:5px;font-size:7.5px}
+.apm .ap-leg b{font-size:8.5px}
+.apm .ap-li{padding:8px 10px;gap:8px}
+.apm .th{width:26px;height:26px;font-size:17px}
 
 /* ---------- 6. Audience ---------- */
 .s-who{padding:170px 120px 0;text-align:center}
@@ -382,6 +463,27 @@ svg{display:block}
   <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></symbol>
+  <symbol id="i-chev-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-chev-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></symbol>
+  <symbol id="i-plus-c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></symbol>
+  <symbol id="i-pie" viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></symbol>
+  <symbol id="i-arrow-r" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="i-shirt" viewBox="0 0 24 24"><path fill="currentColor" d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></symbol>
+  <symbol id="i-glasses" viewBox="0 0 24 24"><circle fill="currentColor" cx="6" cy="15" r="4"/><circle fill="currentColor" cx="18" cy="15" r="4"/><path d="M14 15a2 2 0 0 0-4 0M2.5 13 5 7c.7-1.3 1.4-2 3-2M21.5 13 19 7c-.7-1.3-1.5-2-3-2"/></symbol>
+  <symbol id="i-watch" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/><path d="M12 10v2l1 1"/><path fill="currentColor" d="m16.13 7.66-.81-4.05a2 2 0 0 0-2-1.61h-2.68a2 2 0 0 0-2 1.61l-.78 4.05M7.88 16.36l.8 4a2 2 0 0 0 2 1.61h2.72a2 2 0 0 0 2-1.61l.81-4.05"/></symbol>
   <symbol id="i-prev" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
   <symbol id="i-next" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
   <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></symbol>
@@ -412,12 +514,12 @@ svg{display:block}
     <section class="slide s-problem" data-tr="slide" data-title="პრობლემა" aria-label="პრობლემა">
       <div>
         <div class="eyebrow a left" style="--d:.3s">პრობლემა</div>
-        <h2 class="h2 a" style="--d:.5s">მონაცემები ყველგანაა,<br><span class="grad">სრული სურათი — არსად</span></h2>
-        <p class="lead a" style="--d:1s">ცხრილები, რვეულები და მესენჯერები — ბიზნესის მართვას უამრავი დრო მიაქვს, გადაწყვეტილებები კი ხშირად ინტუიციით მიიღება.</p>
+        <h2 class="h2 a" style="--d:.5s">მონაცემები ყველგანაა,<br><span class="grad">სრული სურათი კი არსად</span></h2>
+        <p class="lead a" style="--d:1s">ცხრილები, რვეულები და მიმოწერები - ბიზნესის მართვას უამრავი დრო მიაქვს, გადაწყვეტილებები კი ხშირად ინტუიციით მიიღება.</p>
         <ul class="pains">
           <li class="a left" style="--d:1.6s"><span class="x"><svg class="ico"><use href="#i-x"/></svg></span>ინფორმაცია სხვადასხვა ადგილასაა მიმოფანტული</li>
           <li class="a left" style="--d:1.95s"><span class="x"><svg class="ico"><use href="#i-x"/></svg></span>ხელით აღრიცხვა შეცდომებს იწვევს</li>
-          <li class="a left" style="--d:2.3s"><span class="x"><svg class="ico"><use href="#i-x"/></svg></span>არ ჩანს, რა მუშაობს და რა — არა</li>
+          <li class="a left" style="--d:2.3s"><span class="x"><svg class="ico"><use href="#i-x"/></svg></span>არ ჩანს, რა მუშაობს და რა - არა</li>
         </ul>
       </div>
       <div class="chaos" aria-hidden="true">
@@ -458,7 +560,7 @@ svg{display:block}
       <div class="core logo-anim a pop" style="--d:.9s;--ld:.9s"><span data-logo></span></div>
       <div class="benefit b1 a burst" style="--d:1.8s"><div class="ib"><svg class="ico"><use href="#i-layers"/></svg></div><div><h3>ყველაფერი ერთ სივრცეში</h3><p>გაყიდვები, მარაგი და კლიენტები ერთად</p></div></div>
       <div class="benefit b2 a burst" style="--d:2.1s"><div class="ib"><svg class="ico"><use href="#i-chart"/></svg></div><div><h3>ანალიტიკა რეალურ დროში</h3><p>მკაფიო რიცხვები სწორი გადაწყვეტილებისთვის</p></div></div>
-      <div class="benefit b3 a burst" style="--d:2.4s"><div class="ib"><svg class="ico"><use href="#i-clock"/></svg></div><div><h3>დაზოგილი დრო</h3><p>ნაკლები რუტინა — მეტი დრო ზრდისთვის</p></div></div>
+      <div class="benefit b3 a burst" style="--d:2.4s"><div class="ib"><svg class="ico"><use href="#i-clock"/></svg></div><div><h3>დაზოგილი დრო</h3><p>ნაკლები რუტინა - მეტი დრო ზრდისთვის</p></div></div>
     </section>
 
     <!-- 4. როგორ მუშაობს -->
@@ -479,70 +581,152 @@ svg{display:block}
       <div class="copy">
         <div class="eyebrow a left" style="--d:.2s">დემო</div>
         <h2 class="h2 a left" style="--d:.4s">ნახე მართეო <span class="grad">მოქმედებაში</span></h2>
-        <div class="feature a left" style="--d:1s"><span class="ck"><svg class="ico"><use href="#i-check"/></svg></span>მკაფიო მთავარი პანელი</div>
-        <div class="feature a left" style="--d:1.25s"><span class="ck"><svg class="ico"><use href="#i-check"/></svg></span>მუშაობს კომპიუტერზე</div>
-        <div class="feature a left" style="--d:1.5s"><span class="ck"><svg class="ico"><use href="#i-check"/></svg></span>და ტელეფონზეც</div>
+        <div class="feature a left" style="--d:1s"><span class="ck"><svg class="ico"><use href="#i-check"/></svg></span>ინფორმაციული მთავარი პანელი</div>
+        <div class="feature a left" style="--d:1.25s"><span class="ck"><svg class="ico"><use href="#i-check"/></svg></span>თავსებადი ყველა მოწყობილობაზე</div>
+        <div class="feature a left" style="--d:1.5s"><span class="ck"><svg class="ico"><use href="#i-check"/></svg></span>ჭკვიანი ასისტენტი - მართეო AI</div>
       </div>
       <div class="laptop a rise" style="--d:.5s">
         <div class="lid"><div class="cam"></div>
-          <div class="screen"><div class="scroller" id="scrLaptop" style="--sd:1.6s">
-            <div class="mk">
-              <div class="side">
-                <div class="lg"><span data-logo></span>MARTEO</div>
-                <div class="it on">მთავარი</div><div class="it">გაყიდვები</div><div class="it">მარაგი</div><div class="it">კლიენტები</div><div class="it">ანგარიშები</div><div class="it">პარამეტრები</div>
+          <div class="screen"><div class="ap">
+            <aside class="ap-side">
+              <div class="ap-logo"><span data-logo></span><img src="assets/wordmark-white.png" alt=""></div>
+              <nav class="ap-nav">
+                <div class="ap-it on"><svg class="ico"><use href="#i-home"/></svg>მთავარი</div>
+                <div class="ap-it"><svg class="ico"><use href="#i-clip"/></svg>შეკვეთები</div>
+                <div class="ap-it"><svg class="ico"><use href="#i-cart"/></svg>შესყიდვები</div>
+                <div class="ap-it"><svg class="ico"><use href="#i-users"/></svg>მომხმარებლები</div>
+                <div class="ap-it"><svg class="ico"><use href="#i-package"/></svg>მარაგები</div>
+                <div class="ap-it"><svg class="ico"><use href="#i-chart"/></svg>ანალიტიკა</div>
+                <div class="ap-it"><svg class="ico"><use href="#i-activity"/></svg>სტატისტიკა</div>
+                <div class="ap-it"><svg class="ico"><use href="#i-cal"/></svg>კონტენტ-კალენდარი</div>
+              </nav>
+              <div class="ap-bottom">
+                <div class="ap-it"><svg class="ico"><use href="#i-msg"/></svg>დახმარება</div>
+                <div class="ap-it box"><svg class="ico"><use href="#i-logout"/></svg>გამოსვლა</div>
               </div>
-              <div class="main">
-                <div class="tb"><h4>გამარჯობა 👋</h4><div class="av"></div></div>
-                <div class="kpis">
-                  <div class="card kpi"><small>შემოსავალი</small><b>₾ 48 250</b><i>▲ 12%</i></div>
-                  <div class="card kpi"><small>შეკვეთები</small><b>1 284</b><i>▲ 8%</i></div>
-                  <div class="card kpi"><small>ახალი კლიენტები</small><b>312</b><i>▲ 15%</i></div>
+            </aside>
+            <header class="ap-top">
+              <svg class="ico bell"><use href="#i-bell"/></svg>
+              <div class="ap-biz"><span class="bi"><svg class="ico"><use href="#i-building"/></svg></span><div><b>ლუნა სთორი</b><small>ანა</small></div><svg class="ico cd"><use href="#i-chev-down"/></svg></div>
+            </header>
+            <div class="ap-main"><div class="scroller" id="scrLaptop" style="--sd:1.6s"><div class="ap-c">
+              <div class="ap-head">
+                <h4>მთავარი <svg class="ico"><use href="#i-help"/></svg></h4>
+                <div class="ap-acts">
+                  <div class="ap-date"><svg class="ico"><use href="#i-cal"/></svg>დასაწყისიდან დღემდე <svg class="ico"><use href="#i-chev-down"/></svg></div>
+                  <div class="ap-btn"><svg class="ico"><use href="#i-plus-c"/></svg>ახალი შეკვეთა</div>
                 </div>
-                <div class="card chart"><span class="ttl">გაყიდვები თვეების მიხედვით</span>
-                  <div class="bars"><span style="height:40%"></span><span style="height:55%"></span><span style="height:48%"></span><span style="height:62%"></span><span style="height:58%"></span><span style="height:70%"></span><span style="height:66%"></span><span style="height:78%"></span><span style="height:74%"></span><span style="height:86%"></span><span style="height:82%"></span><span style="height:95%"></span></div>
-                </div>
-                <div class="row2">
-                  <div class="card"><span class="ttl">კატეგორიები</span><div class="donut"></div></div>
-                  <div class="card"><span class="ttl">ბოლო შეკვეთები</span>
-                    <div class="tr th"><span>კლიენტი</span><span>თანხა</span><span>სტატუსი</span></div>
-                    <div class="tr"><span>ნინო ბ.</span><span>₾ 240</span><span><em class="pill">გადახდილი</em></span></div>
-                    <div class="tr"><span>გიორგი მ.</span><span>₾ 85</span><span><em class="pill w">მუშავდება</em></span></div>
-                    <div class="tr"><span>ანა ქ.</span><span>₾ 410</span><span><em class="pill">გადახდილი</em></span></div>
+              </div>
+              <div class="ap-hi"><span class="mo"><svg class="ico"><use href="#i-moon"/></svg></span><span>მოგესალმებით, <b>ანა</b>!</span></div>
+              <div class="ap-per">პერიოდი: 01.08.2026 - 05.11.2026</div>
+              <div class="ap-kpis">
+                <div class="ap-card ap-kpi"><div class="ti b"><svg class="ico"><use href="#i-cart"/></svg></div><small>სულ გაყიდვები</small><b>48 760.00 ₾</b></div>
+                <div class="ap-card ap-kpi"><div class="ti g"><svg class="ico"><use href="#i-chart"/></svg></div><small>სუფთა მოგება</small><b>19 435.00 ₾</b></div>
+                <div class="ap-card ap-kpi"><div class="ti b"><svg class="ico"><use href="#i-clip"/></svg></div><small>სულ შეკვეთები</small><b>387</b></div>
+                <div class="ap-card ap-kpi"><div class="ti y"><svg class="ico"><use href="#i-package"/></svg></div><small>ამჟამად მარაგში</small><b>1 248</b></div>
+              </div>
+              <div class="ap-row">
+                <div class="ap-card ap-box">
+                  <div class="ap-bh"><b>გაყიდვები და სუფთა მოგება</b><div class="ap-lg"><span><i style="background:#4C7BD9"></i>გაყიდვები</span><span><i style="background:#22C55E"></i>სუფთა მოგება</span></div></div>
+                  <div class="ap-chart">
+                    <div class="gl" style="top:0"><span>20.0 ათ. ₾</span></div><div class="gl" style="top:50%"><span>10.0 ათ. ₾</span></div><div class="gl" style="top:100%;border:0"><span>0 ₾</span></div>
+                    <div class="cols">
+                      <div class="col"><i class="s" style="height:49%"></i><i class="p" style="height:19.5%"></i></div>
+                      <div class="col"><i class="s" style="height:62%"></i><i class="p" style="height:25%"></i></div>
+                      <div class="col"><i class="s" style="height:84.5%"></i><i class="p" style="height:33.5%"></i></div>
+                      <div class="col"><i class="s" style="height:48%"></i><i class="p" style="height:19%"></i></div>
+                    </div>
                   </div>
+                  <div class="ap-mx"><span>08.2026</span><span>09.2026</span><span>10.2026</span><span>11.2026</span></div>
+                  <div class="ap-sum"><span class="h">11.2026</span><span>● გაყიდვები<b>9 660.00 ₾</b></span><span>● სუფთა მოგება<b>3 835.00 ₾</b></span></div>
                 </div>
-                <div class="card"><span class="ttl">მარაგი</span>
-                  <div class="tr th"><span>პროდუქტი</span><span>რაოდენობა</span><span>სტატუსი</span></div>
-                  <div class="tr"><span>პროდუქტი A</span><span>124</span><span><em class="pill">საკმარისი</em></span></div>
-                  <div class="tr"><span>პროდუქტი B</span><span>18</span><span><em class="pill w">მცირეა</em></span></div>
-                  <div class="tr"><span>პროდუქტი C</span><span>260</span><span><em class="pill">საკმარისი</em></span></div>
-                  <div class="tr"><span>პროდუქტი D</span><span>9</span><span><em class="pill w">მცირეა</em></span></div>
-                  <div class="tr"><span>პროდუქტი E</span><span>77</span><span><em class="pill">საკმარისი</em></span></div>
+                <div class="ap-card ap-box">
+                  <div class="ap-bh"><b><svg class="ico"><use href="#i-pie"/></svg>ხარჯების განაწილება</b></div>
+                  <div class="ap-per">01.08.2026 - 05.11.2026</div>
+                  <div class="ap-donut-wrap">
+                    <div class="ap-donut"><div><span>ჯამური ხარჯი<b>29 325.00 ₾</b></span></div></div>
+                    <div class="ap-leg">
+                      <span><i style="background:#F4B63F"></i>გაყიდული პროდუქტის ხარჯი<b>21 840.00 ₾</b></span>
+                      <span><i style="background:#4C7BD9"></i>მიწოდება<b>3 120.00 ₾</b></span>
+                      <span><i style="background:#22C55E"></i>რეკლამა<b>2 650.00 ₾</b></span>
+                      <span><i style="background:#A78BFA"></i>შეფუთვა<b>1 715.00 ₾</b></span>
+                    </div>
+                  </div>
+                  <div class="ap-note">კატეგორიაზე დაჭერით მის თანხას წრის ცენტრში ნახავთ.</div>
                 </div>
               </div>
-            </div>
+              <div class="ap-row">
+                <div class="ap-card ap-list">
+                  <div class="ap-bh"><b>ბოლო შეკვეთები</b><a>ყველა შეკვეთა <svg class="ico"><use href="#i-arrow-r"/></svg></a></div>
+                  <div class="ap-li"><span class="th" style="color:#1A1A1A"><svg class="ico"><use href="#i-shirt"/></svg></span><div class="tx"><b>#0387 მარიამ ბერიძე</b><small><span class="st b">გაგზავნილი</span>2 პროდუქტი</small></div><span class="pr">145.00 ₾</span></div>
+                  <div class="ap-li"><span class="th" style="color:#8B5A2B"><svg class="ico"><use href="#i-bag"/></svg></span><div class="tx"><b>#0386 გიორგი კაპანაძე</b><small><span class="st y">მუშავდება</span>1 პროდუქტი</small></div><span class="pr">140.00 ₾</span></div>
+                  <div class="ap-li"><span class="th" style="color:#111"><svg class="ico"><use href="#i-glasses"/></svg></span><div class="tx"><b>#0385 ელენე წიკლაური</b><small><span class="st g">მიწოდებული</span>3 პროდუქტი</small></div><span class="pr">312.00 ₾</span></div>
+                  <div class="ap-li"><span class="th" style="color:#7C8794"><svg class="ico"><use href="#i-shirt"/></svg></span><div class="tx"><b>#0384 დავით ხარაზიშვილი</b><small><span class="st b">გაგზავნილი</span>1 პროდუქტი</small></div><span class="pr">90.00 ₾</span></div>
+                  <div class="ap-li"><span class="th" style="color:#2F4F3A"><svg class="ico"><use href="#i-watch"/></svg></span><div class="tx"><b>#0383 თამარ ლომიძე</b><small><span class="st y">მუშავდება</span>2 პროდუქტი</small></div><span class="pr">215.00 ₾</span></div>
+                </div>
+                <div class="ap-card ap-list">
+                  <div class="ap-bh"><b>ყველაზე გაყიდვადი პროდუქტები</b><a>მარაგების ნახვა <svg class="ico"><use href="#i-arrow-r"/></svg></a></div>
+                  <div class="ap-li"><span class="n">1</span><span class="th" style="color:#C9CED6"><svg class="ico"><use href="#i-shirt"/></svg></span><div class="tx"><b>ბამბის მაისური, თეთრი</b><small>24 ერთეული</small></div><span class="pr">1 176.00 ₾</span></div>
+                  <div class="ap-li"><span class="n">2</span><span class="th" style="color:#8B5A2B"><svg class="ico"><use href="#i-bag"/></svg></span><div class="tx"><b>ტყავის ჩანთა Mini</b><small>11 ერთეული</small></div><span class="pr">1 540.00 ₾</span></div>
+                  <div class="ap-li"><span class="n">3</span><span class="th" style="color:#111"><svg class="ico"><use href="#i-glasses"/></svg></span><div class="tx"><b>მზის სათვალე Retro</b><small>15 ერთეული</small></div><span class="pr">675.00 ₾</span></div>
+                  <div class="ap-li"><span class="n">4</span><span class="th" style="color:#7C8794"><svg class="ico"><use href="#i-shirt"/></svg></span><div class="tx"><b>ჰუდი Oversize, ნაცრისფერი</b><small>9 ერთეული</small></div><span class="pr">810.00 ₾</span></div>
+                  <div class="ap-li"><span class="n">5</span><span class="th" style="color:#2F4F3A"><svg class="ico"><use href="#i-watch"/></svg></span><div class="tx"><b>მაჯის საათი Classic</b><small>6 ერთეული</small></div><span class="pr">1 020.00 ₾</span></div>
+                </div>
+              </div>
+            </div></div></div>
+            <div class="ap-ai"><span data-logo></span>მართეო AI<svg class="ico"><use href="#i-chev-up"/></svg></div>
           </div></div>
         </div>
         <div class="base"></div>
       </div>
       <div class="phone a right" style="--d:1.1s">
         <div class="notch"></div>
-        <div class="screen"><div class="scroller" id="scrPhone" style="--sd:2s;--sdur:3.8s">
-          <div class="mm">
-            <div class="hd"><b>მთავარი</b><span data-logo></span></div>
-            <div class="big"><small>დღევანდელი შემოსავალი</small><b>₾ 1 860</b><small>▲ 9% გუშინდელთან</small>
-              <div class="sp"><span style="height:30%"></span><span style="height:50%"></span><span style="height:40%"></span><span style="height:70%"></span><span style="height:60%"></span><span style="height:90%"></span><span style="height:80%"></span></div></div>
-            <div class="g2"><div class="c">შეკვეთები<b>46</b></div><div class="c">კლიენტები<b>18</b></div></div>
-            <div class="g2"><div class="c">მარაგი<b>1 240</b></div><div class="c">დავალებები<b>5</b></div></div>
-            <div class="li"><span>ნინო ბ.</span><i>₾ 240</i></div>
-            <div class="li"><span>გიორგი მ.</span><i>₾ 85</i></div>
-            <div class="li"><span>ანა ქ.</span><i>₾ 410</i></div>
-            <div class="li"><span>ლუკა დ.</span><i>₾ 132</i></div>
-            <div class="li"><span>მარიამ ს.</span><i>₾ 64</i></div>
-            <div class="li"><span>დავით ჯ.</span><i>₾ 299</i></div>
-            <div class="li"><span>თამარ ხ.</span><i>₾ 178</i></div>
-            <div class="li"><span>ირაკლი ფ.</span><i>₾ 520</i></div>
-            <div class="li"><span>სალომე გ.</span><i>₾ 91</i></div>
-          </div>
+        <div class="screen"><div class="apm">
+          <div class="apm-top"><svg class="ico"><use href="#i-menu"/></svg><span data-logo></span><div class="rt"><svg class="ico"><use href="#i-bell"/></svg><span class="bz"><svg class="ico"><use href="#i-building"/></svg><svg class="ico cd"><use href="#i-chev-down"/></svg></span></div></div>
+          <div class="apm-main"><div class="scroller" id="scrPhone" style="--sd:2s;--sdur:3.8s"><div class="apm-c">
+            <h4>მთავარი <svg class="ico"><use href="#i-help"/></svg></h4>
+            <div class="ap-hi"><span class="mo"><svg class="ico"><use href="#i-moon"/></svg></span><span>მოგესალმებით, <b>ანა</b>!</span></div>
+            <div class="ap-btn"><svg class="ico"><use href="#i-plus-c"/></svg>ახალი შეკვეთა</div>
+            <div class="ap-date"><span><svg class="ico"><use href="#i-cal"/></svg> დასაწყისიდან დღემდე</span><svg class="ico"><use href="#i-chev-down"/></svg></div>
+            <div class="ap-per">პერიოდი: 01.08.2026 - 05.11.2026</div>
+            <div class="ap-kpis">
+              <div class="ap-card ap-kpi"><div class="ti b"><svg class="ico"><use href="#i-cart"/></svg></div><small>სულ გაყიდვები</small><b>48 760.00 ₾</b></div>
+              <div class="ap-card ap-kpi"><div class="ti g"><svg class="ico"><use href="#i-chart"/></svg></div><small>სუფთა მოგება</small><b>19 435.00 ₾</b></div>
+              <div class="ap-card ap-kpi"><div class="ti b"><svg class="ico"><use href="#i-clip"/></svg></div><small>სულ შეკვეთები</small><b>387</b></div>
+              <div class="ap-card ap-kpi"><div class="ti y"><svg class="ico"><use href="#i-package"/></svg></div><small>ამჟამად მარაგში</small><b>1 248</b></div>
+            </div>
+            <div class="ap-card ap-box">
+              <div class="ap-bh"><b>გაყიდვები და სუფთა მოგება</b></div>
+              <div class="ap-lg" style="margin-bottom:8px"><span><i style="background:#4C7BD9"></i>გაყიდვები</span><span><i style="background:#22C55E"></i>სუფთა მოგება</span></div>
+              <div class="ap-chart">
+                <div class="gl" style="top:0"><span>20.0 ათ.</span></div><div class="gl" style="top:50%"><span>10.0 ათ.</span></div><div class="gl" style="top:100%;border:0"><span>0 ₾</span></div>
+                <div class="cols">
+                  <div class="col"><i class="s" style="height:49%"></i><i class="p" style="height:19.5%"></i></div>
+                  <div class="col"><i class="s" style="height:62%"></i><i class="p" style="height:25%"></i></div>
+                  <div class="col"><i class="s" style="height:84.5%"></i><i class="p" style="height:33.5%"></i></div>
+                  <div class="col"><i class="s" style="height:48%"></i><i class="p" style="height:19%"></i></div>
+                </div>
+              </div>
+              <div class="ap-mx"><span>08</span><span>09</span><span>10</span><span>11</span></div>
+            </div>
+            <div class="ap-card ap-box">
+              <div class="ap-bh"><b><svg class="ico"><use href="#i-pie"/></svg>ხარჯების განაწილება</b></div>
+              <div class="ap-donut-wrap">
+                <div class="ap-donut"><div><span>ჯამური ხარჯი<b>29 325.00 ₾</b></span></div></div>
+                <div class="ap-leg">
+                  <span><i style="background:#F4B63F"></i>პროდუქტის ხარჯი<b>21 840.00 ₾</b></span>
+                  <span><i style="background:#4C7BD9"></i>მიწოდება<b>3 120.00 ₾</b></span>
+                  <span><i style="background:#22C55E"></i>რეკლამა<b>2 650.00 ₾</b></span>
+                </div>
+              </div>
+            </div>
+            <div class="ap-card ap-list">
+              <div class="ap-bh"><b>ბოლო შეკვეთები</b><a>ყველა <svg class="ico"><use href="#i-arrow-r"/></svg></a></div>
+              <div class="ap-li"><span class="th" style="color:#1A1A1A"><svg class="ico"><use href="#i-shirt"/></svg></span><div class="tx"><b>#0387 მარიამ ბერიძე</b><small><span class="st b">გაგზავნილი</span></small></div><span class="pr">145.00 ₾</span></div>
+              <div class="ap-li"><span class="th" style="color:#8B5A2B"><svg class="ico"><use href="#i-bag"/></svg></span><div class="tx"><b>#0386 გიორგი კაპანაძე</b><small><span class="st y">მუშავდება</span></small></div><span class="pr">140.00 ₾</span></div>
+              <div class="ap-li"><span class="th" style="color:#111"><svg class="ico"><use href="#i-glasses"/></svg></span><div class="tx"><b>#0385 ელენე წიკლაური</b><small><span class="st g">მიწოდებული</span></small></div><span class="pr">312.00 ₾</span></div>
+            </div>
+          </div></div></div>
         </div></div>
       </div>
     </section>
@@ -552,8 +736,8 @@ svg{display:block}
       <div class="eyebrow a" style="--d:.2s">ვისთვისაა</div>
       <h2 class="h2 a" style="--d:.4s">ვისთვის შეიქმნა <span class="grad">მართეო?</span></h2>
       <div class="cards">
-        <div class="who a rise" style="--d:.9s"><div class="wi"><svg class="ico"><use href="#i-store"/></svg></div><h3>მცირე და საშუალო ბიზნესი</h3><p>მთელი ბიზნესის კონტროლი ერთ ადგილას — ზედმეტი სირთულის გარეშე.</p></div>
-        <div class="who a rise" style="--d:1.3s"><div class="wi"><svg class="ico"><use href="#i-bag"/></svg></div><h3>ონლაინ გამყიდველები</h3><p>შეკვეთები და მარაგი ყოველთვის წესრიგშია.</p></div>
+        <div class="who a rise" style="--d:.9s"><div class="wi"><svg class="ico"><use href="#i-store"/></svg></div><h3>მცირე და საშუალო ბიზნესი</h3><p>მთელი ბიზნესის კონტროლი ერთ ადგილას - ზედმეტი სირთულის გარეშე.</p></div>
+        <div class="who a rise" style="--d:1.3s"><div class="wi"><svg class="ico"><use href="#i-bag"/></svg></div><h3>ონლაინ მაღაზიები</h3><p>შეკვეთები და მარაგი ყოველთვის წესრიგშია.</p></div>
         <div class="who a rise" style="--d:1.7s"><div class="wi"><svg class="ico"><use href="#i-briefcase"/></svg></div><h3>მენეჯერები და მფლობელები</h3><p>ზუსტი ანგარიშები სწრაფი და გააზრებული გადაწყვეტილებებისთვის.</p></div>
       </div>
     </section>
